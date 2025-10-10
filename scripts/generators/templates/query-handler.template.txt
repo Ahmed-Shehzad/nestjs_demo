@@ -1,0 +1,30 @@
+import { Injectable } from '@nestjs/common';
+import { RequestHandler } from '@/mediator/decorators/request-handler.decorator';
+import { IQueryHandler } from '@/mediator/types/request';
+import { {{NAME_PASCAL}}Query } from './{{NAME_KEBAB}}.query';
+import { {{NAME_PASCAL}}Dto } from './{{NAME_KEBAB}}.dto';
+
+/**
+ * {{NAME_PASCAL}}QueryHandler
+ * Handles {{NAME_PASCAL}}Query and returns {{NAME_PASCAL}}Dto
+ * Generated on: {{TIMESTAMP}}
+ * Feature: {{FEATURE_PASCAL}}
+ */
+@Injectable()
+@RequestHandler({{NAME_PASCAL}}Query)
+export class {{NAME_PASCAL}}QueryHandler implements IQueryHandler<{{NAME_PASCAL}}Query, {{NAME_PASCAL}}Dto> {
+  constructor(
+    // Inject dependencies here
+    // Example: private readonly {{FEATURE_CAMEL}}Repository: {{FEATURE_PASCAL}}Repository,
+  ) {}
+
+  async handleAsync(query: {{NAME_PASCAL}}Query): Promise<{{NAME_PASCAL}}Dto> {
+    // TODO: Implement query logic
+
+    // Example implementation:
+    // const result = await this.{{FEATURE_CAMEL}}Repository.findById(query.id);
+    // return new {{NAME_PASCAL}}Dto(result.id, result.name);
+
+    throw new Error('{{NAME_PASCAL}}QueryHandler.handleAsync not implemented');
+  }
+}

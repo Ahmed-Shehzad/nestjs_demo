@@ -1,0 +1,45 @@
+import { Injectable, Logger } from '@nestjs/common';
+import { INotificationHandler } from '@/mediator/types/notification';
+import { NotificationHandler } from '@/mediator/decorators/notification-handler.decorator';
+import { {{NAME_PASCAL}}Event } from './{{NAME_KEBAB}}.event';
+
+/**
+ * {{NAME_PASCAL}}EventHandler
+ * Handles {{NAME_PASCAL}}Event domain event
+ * Generated on: {{TIMESTAMP}}
+ * Feature: {{FEATURE_PASCAL}}
+ */
+@Injectable()
+@NotificationHandler({{NAME_PASCAL}}Event)
+export class {{NAME_PASCAL}}EventHandler implements INotificationHandler<{{NAME_PASCAL}}Event> {
+  private readonly logger = new Logger({{NAME_PASCAL}}EventHandler.name);
+
+  constructor(
+    // Inject dependencies here
+    // Example: private readonly notificationService: NotificationService,
+    // Example: private readonly auditService: AuditService,
+  ) {}
+
+  async handleAsync(event: {{NAME_PASCAL}}Event): Promise<void> {
+    this.logger.log(`Handling domain event: ${event.eventName}`);
+
+    try {
+      // TODO: Implement event handling logic
+
+      // Example implementations:
+      // await this.notificationService.sendNotification(event.aggregateId);
+      // await this.auditService.logDomainEvent(event);
+      // await this.updateReadModel(event);
+
+      this.logger.log(`Successfully handled domain event: ${event.eventName}`);
+    } catch (error) {
+      this.logger.error(`Failed to handle domain event: ${event.eventName}`, error);
+      throw error;
+    }
+  }
+
+  // Example helper method
+  // private async updateReadModel(event: {{NAME_PASCAL}}Event): Promise<void> {
+  //   // Update read model or projection
+  // }
+}

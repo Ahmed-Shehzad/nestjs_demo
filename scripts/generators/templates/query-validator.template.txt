@@ -1,0 +1,25 @@
+import { Injectable } from '@nestjs/common';
+import { ValidatorFor } from '@/mediator/decorators/validator.decorator';
+import { AbstractValidator } from '@/fluent-validation/abstract.validator';
+import { {{NAME_PASCAL}}Query } from './{{NAME_KEBAB}}.query';
+
+/**
+ * {{NAME_PASCAL}}QueryValidator
+ * Fluent validation for {{NAME_PASCAL}}Query
+ * Generated on: {{TIMESTAMP}}
+ * Feature: {{FEATURE_PASCAL}}
+ */
+@Injectable()
+@ValidatorFor({{NAME_PASCAL}}Query)
+export class {{NAME_PASCAL}}QueryValidator extends AbstractValidator<{{NAME_PASCAL}}Query> {
+  constructor() {
+    super();
+
+    // Add validation rules here
+    // Example:
+    // this.ruleFor((x) => x.id)
+    //   .mustBeDefined()
+    //   .mustBe((id) => id > 0)
+    //   .withMessage('ID must be greater than 0');
+  }
+}

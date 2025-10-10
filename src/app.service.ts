@@ -24,6 +24,6 @@ export class AppService {
       link: 'https://example.com',
     };
 
-    return { user: user, bookmark: bookmark };
+    return { user, bookmark };
   }
 }

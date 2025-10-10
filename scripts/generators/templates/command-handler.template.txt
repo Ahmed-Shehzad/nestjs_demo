@@ -1,0 +1,33 @@
+import { Injectable } from '@nestjs/common';
+import { ICommandHandler } from '@/mediator/types/request';
+import { RequestHandler } from '@/mediator/decorators/request-handler.decorator';
+import { {{NAME_PASCAL}}Command } from './{{NAME_KEBAB}}.command';
+
+/**
+ * {{NAME_PASCAL}}CommandHandler
+ * Handles {{NAME_PASCAL}}Command
+ * Generated on: {{TIMESTAMP}}
+ * Feature: {{FEATURE_PASCAL}}
+ */
+@Injectable()
+@RequestHandler({{NAME_PASCAL}}Command)
+export class {{NAME_PASCAL}}CommandHandler implements ICommandHandler<{{NAME_PASCAL}}Command, void> {
+  constructor(
+    // Inject dependencies here
+    // Example: private readonly {{FEATURE_CAMEL}}Repository: {{FEATURE_PASCAL}}Repository,
+    // Example: private readonly eventBus: IEventBus,
+  ) {}
+
+  async handleAsync(command: {{NAME_PASCAL}}Command): Promise<void> {
+    // TODO: Implement command logic
+
+    // Example implementation:
+    // const entity = new {{FEATURE_PASCAL}}Entity(command.name, command.email);
+    // await this.{{FEATURE_CAMEL}}Repository.save(entity);
+    //
+    // // Optionally publish domain event
+    // await this.eventBus.publish(new {{FEATURE_PASCAL}}CreatedEvent(entity.id));
+
+    throw new Error('{{NAME_PASCAL}}CommandHandler.handleAsync not implemented');
+  }
+}

@@ -19,6 +19,13 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
-    "noFallthroughCasesInSwitch": false
+    "noFallthroughCasesInSwitch": false,
+    "paths": {
+      "@/*": ["./src/*"],
+      "@/mediator/*": ["./src/lib/mediator/*"],
+      "@/fluent-validation/*": ["./src/lib/fluent-validation/*"],
+      "@/features/*": ["./src/features/*"],
+      "@/config/*": ["./src/config/*"]
+    }
   }
 }

@@ -57,6 +57,45 @@ $ npm run test:e2e
 $ npm run test:cov
 ```
 
+## Code Generation
+
+This project includes powerful code generators to quickly scaffold CQRS components with proper structure and templates.
+
+### Quick Start
+
+```bash
+# Show available generators and usage examples
+$ npm run generate:help
+
+# Interactive generator with prompts
+$ npm run generate
+
+# Direct generation (faster for experienced users)
+$ npm run generate:query -- --name GetUserProfile --feature user-management
+$ npm run generate:command -- --name CreateUser --feature user-management
+$ npm run generate:domain-event -- --name UserRegistered --feature user-management
+```
+
+### Available Generators
+
+- **Query**: Generates query, DTO, validator, and handler files
+- **Command**: Generates command, validator, and handler files
+- **Domain Event**: Generates domain event and notification handler files
+
+### Generated Structure
+
+All generators create files in a feature-based structure:
+
+```
+src/features/{feature-name}/
+├── queries/           # Query components with DTOs and validators
+├── commands/          # Command components with validators
+└── events/
+    └── domain/        # Internal domain events with handlers
+```
+
+For detailed documentation, see [`docs/CODE_GENERATION.md`](docs/CODE_GENERATION.md).
+
 ## Deployment
 
 When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.

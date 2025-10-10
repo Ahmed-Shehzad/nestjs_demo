@@ -1,0 +1,13 @@
+/**
+ * {{NAME_PASCAL}}Dto
+ * Response DTO for {{NAME_PASCAL}}Query
+ * Generated on: {{TIMESTAMP}}
+ * Feature: {{FEATURE_PASCAL}}
+ */
+export class {{NAME_PASCAL}}Dto {
+  constructor(
+    // Add DTO properties here
+    // Example: public readonly id: number,
+    // Example: public readonly name: string,
+  ) {}
+}

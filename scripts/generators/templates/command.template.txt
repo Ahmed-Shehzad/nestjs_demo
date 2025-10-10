@@ -1,0 +1,14 @@
+import { ICommand } from '@/mediator/types/request';
+
+/**
+ * {{NAME_PASCAL}}Command
+ * Generated on: {{TIMESTAMP}}
+ * Feature: {{FEATURE_PASCAL}}
+ */
+export class {{NAME_PASCAL}}Command implements ICommand<void> {
+  constructor(
+    // Add command parameters here
+    // Example: public readonly name: string,
+    // Example: public readonly email: string,
+  ) {}
+}

@@ -1,24 +1,13 @@
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { MediatorModule } from './mediator';
-import { GetUserByIdHandler } from './mediator/examples/handlers';
-import { FluentValidationModule } from './fluentvalidation/fluent-validation.module';
-import { GlobalValidationController } from './controllers/global-validation.controller';
-import { ClassValidatorDemoController } from './controllers/class-validator-demo.controller';
-import { MediatorValidationController } from './controllers/mediator-validation.controller';
-import { HybridValidationController } from './controllers/hybrid-validation.controller';
-import { UserService } from './services/user.service';
+import { MediatorModule } from '@/mediator/mediator.module';
 
 @Module({
-  imports: [MediatorModule, FluentValidationModule],
-  controllers: [
-    AppController,
-    GlobalValidationController,
-    ClassValidatorDemoController,
-    MediatorValidationController,
-    HybridValidationController,
+  imports: [
+    MediatorModule, // Mediator module (which includes FluentValidationModule)
   ],
-  providers: [AppService, GetUserByIdHandler, UserService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}

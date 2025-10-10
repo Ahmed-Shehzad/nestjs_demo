@@ -1,0 +1,14 @@
+import { IQuery } from '@/mediator/types/request';
+import { {{NAME_PASCAL}}Dto } from './{{NAME_KEBAB}}.dto';
+
+/**
+ * {{NAME_PASCAL}}Query
+ * Generated on: {{TIMESTAMP}}
+ * Feature: {{FEATURE_PASCAL}}
+ */
+export class {{NAME_PASCAL}}Query implements IQuery<{{NAME_PASCAL}}Dto> {
+  constructor(
+    // Add query parameters here
+    // Example: public readonly id: number,
+  ) {}
+}
