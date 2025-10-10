@@ -7,5 +7,9 @@ import { GetAllUsersDto } from './get-all-users.dto';
  * Feature: User
  */
 export class GetAllUsersQuery implements IQuery<GetAllUsersDto> {
-  constructor() {} // Example: public readonly id: number, // Add query parameters here
+  constructor(
+    public readonly page: number = 1,
+    public readonly limit: number = 10,
+    public readonly baseUrl: string = '/api/users',
+  ) {}
 }

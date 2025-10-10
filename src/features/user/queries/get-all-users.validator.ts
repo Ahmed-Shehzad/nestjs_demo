@@ -15,11 +15,27 @@ export class GetAllUsersQueryValidator extends AbstractValidator<GetAllUsersQuer
   constructor() {
     super();
 
-    // Add validation rules here
-    // Example:
-    // this.ruleFor((x) => x.id)
-    //   .mustBeDefined()
-    //   .mustBe((id) => id > 0)
-    //   .withMessage('ID must be greater than 0');
+    // Validation rules for pagination parameters
+    this.ruleFor((x) => x.page)
+      .mustBeDefined()
+      .withMessage('Page number is required')
+      .mustBe((page) => page >= 1)
+      .withMessage('Page number must be greater than or equal to 1')
+      .mustBe((page) => page <= 1000)
+      .withMessage('Page number must not exceed 1000');
+
+    this.ruleFor((x) => x.limit)
+      .mustBeDefined()
+      .withMessage('Limit is required')
+      .mustBe((limit) => limit >= 1)
+      .withMessage('Limit must be greater than or equal to 1')
+      .mustBe((limit) => limit <= 100)
+      .withMessage('Limit must not exceed 100 items per page');
+
+    this.ruleFor((x) => x.baseUrl)
+      .mustBeDefined()
+      .withMessage('Base URL is required')
+      .mustBe((url) => url.trim().length > 0)
+      .withMessage('Base URL cannot be empty');
   }
 }

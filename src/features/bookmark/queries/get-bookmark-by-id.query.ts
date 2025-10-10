@@ -7,5 +7,5 @@ import { GetBookmarkByIdDto } from './get-bookmark-by-id.dto';
  * Feature: Bookmark
  */
 export class GetBookmarkByIdQuery implements IQuery<GetBookmarkByIdDto> {
-  constructor() {} // Example: public readonly id: number, // Add query parameters here
+  constructor(public readonly id: number) {}
 }

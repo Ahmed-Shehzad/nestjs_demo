@@ -9,12 +9,16 @@ export class LoggingBehavior implements IPipelineBehavior<any, any> {
 
   async handleAsync(request: any, next: () => Promise<any>): Promise<any> {
     const name = request.constructor.name;
+    console.log(`[Logging] Starting execution of: ${name}`);
     const start = Date.now();
     try {
       const res = await next();
-      this.logger.log(`${name} executed in ${Date.now() - start}ms`);
+      const duration = Date.now() - start;
+      console.log(`[Logging] Completed execution of: ${name} in ${duration}ms`);
+      this.logger.log(`${name} executed in ${duration}ms`);
       return res;
     } catch (e) {
+      console.log(`[Logging] Failed execution of: ${name} - ${e.message}`);
       this.logger.error(`${name} failed: ${e.message}`);
       throw e;
     }

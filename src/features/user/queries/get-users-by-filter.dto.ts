@@ -1,4 +1,3 @@
-import { User } from '@prisma/client';
 /**
  * GetUsersByFilterDto
  * Response DTO for GetUsersByFilterQuery
@@ -6,5 +5,5 @@ import { User } from '@prisma/client';
  * Feature: User
  */
 export class GetUsersByFilterDto {
-  constructor(public users: User[]) {} // Example: public readonly name: string, // Example: public readonly id: number, // Add DTO properties here
+  constructor() {} // Example: public readonly name: string, // Example: public readonly id: number, // Add DTO properties here
 }

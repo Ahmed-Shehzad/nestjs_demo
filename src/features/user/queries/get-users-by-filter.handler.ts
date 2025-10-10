@@ -1,11 +1,8 @@
-import { PrismaClient } from '@prisma/client';
 import { Injectable } from '@nestjs/common';
 import { RequestHandler } from '@/mediator/decorators/request-handler.decorator';
 import { IQueryHandler } from '@/mediator/types/request';
 import { GetUsersByFilterQuery } from './get-users-by-filter.query';
 import { GetUsersByFilterDto } from './get-users-by-filter.dto';
-
-const prisma = new PrismaClient();
 
 /**
  * GetUsersByFilterQueryHandler
@@ -20,9 +17,8 @@ export class GetUsersByFilterQueryHandler implements IQueryHandler<GetUsersByFil
 
   async handleAsync(query: GetUsersByFilterQuery): Promise<GetUsersByFilterDto> {
     // TODO: Implement query logic
-    const users = await prisma.user.findMany();
     // Example implementation:
     // const result = await this.userRepository.findById(query.id);
-    return new GetUsersByFilterDto(users); // Replace with actual properties
+    return new GetUsersByFilterDto(); // Replace with actual properties
   }
 }

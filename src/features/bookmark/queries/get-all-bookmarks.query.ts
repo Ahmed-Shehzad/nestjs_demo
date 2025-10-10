@@ -7,5 +7,9 @@ import { GetAllBookmarksDto } from './get-all-bookmarks.dto';
  * Feature: Bookmark
  */
 export class GetAllBookmarksQuery implements IQuery<GetAllBookmarksDto> {
-  constructor() {} // Example: public readonly id: number, // Add query parameters here
+  constructor(
+    public readonly page: number = 1,
+    public readonly limit: number = 10,
+    public readonly baseUrl: string = '/api/bookmarks',
+  ) {}
 }

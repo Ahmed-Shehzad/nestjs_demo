@@ -3,6 +3,7 @@ import { DiscoveryModule } from '@golevelup/nestjs-discovery';
 import { FluentValidationModule } from '@/fluent-validation/fluent-validation.module';
 import { MediatorDiscoveryService } from './discovery/mediator-discovery.service';
 import { NotificationPublisher } from './services/notification-publisher.service';
+import { MediatorService } from './services/mediator.service';
 import { LoggingBehavior } from './behaviors/logging.behavior';
 import { TelemetryBehavior } from './behaviors/telemetry.behavior';
 import { ValidationBehavior } from './behaviors/validation.behavior';
@@ -18,26 +19,26 @@ import { ValidationBehavior } from './behaviors/validation.behavior';
  * - Integration with fluent validation system
  */
 @Module({
-  imports: [
-    DiscoveryModule, // For automatic discovery of handlers and validators
-    FluentValidationModule, // For validator integration
-  ],
+  imports: [DiscoveryModule, FluentValidationModule],
   providers: [
-    // Core services
     MediatorDiscoveryService,
     NotificationPublisher,
-
-    // Pipeline behaviors
+    MediatorService,
+    {
+      provide: 'IMediator',
+      useClass: MediatorService,
+    },
     LoggingBehavior,
     TelemetryBehavior,
     ValidationBehavior,
   ],
   exports: [
-    // Export core services for use in other modules
     MediatorDiscoveryService,
     NotificationPublisher,
-
-    // Export behaviors for custom pipeline configurations
+    {
+      provide: 'IMediator',
+      useClass: MediatorService,
+    },
     LoggingBehavior,
     TelemetryBehavior,
     ValidationBehavior,
