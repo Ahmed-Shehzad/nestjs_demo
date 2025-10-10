@@ -1,6 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { DiscoveryModule } from '@nestjs/core';
 import { MediatorService } from './mediator.service';
+import { ValidationPipe } from './mediator.pipe';
 
 /**
  * Mediator module that provides a MediatR-like pattern for NestJS
@@ -17,7 +18,7 @@ import { MediatorService } from './mediator.service';
 @Global()
 @Module({
   imports: [DiscoveryModule],
-  providers: [MediatorService],
-  exports: [MediatorService],
+  providers: [MediatorService, ValidationPipe],
+  exports: [MediatorService, ValidationPipe],
 })
 export class MediatorModule {}

@@ -7,3 +7,6 @@ export * from './decorators';
 // Export service and module
 export * from './mediator.service';
 export * from './mediator.module';
+
+// Export validation pipe
+export * from './mediator.pipe';
