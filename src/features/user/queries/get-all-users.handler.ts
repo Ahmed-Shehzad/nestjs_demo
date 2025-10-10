@@ -1,9 +1,9 @@
-import { Injectable } from '@nestjs/common';
 import { RequestHandler } from '@/mediator/decorators/request-handler.decorator';
 import { IQueryHandler } from '@/mediator/types/request';
+import { Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
-import { GetAllUsersQuery } from './get-all-users.query';
 import { GetAllUsersDto, UserResponse } from './get-all-users.dto';
+import { GetAllUsersQuery } from './get-all-users.query';
 
 /**
  * GetAllUsersQueryHandler

@@ -1,0 +1,53 @@
+import { PaginatedResponse } from '@/hateoas';
+
+/**
+ * {{NAME_PASCAL}} Response Type (without sensitive data)
+ */
+export interface {{NAME_PASCAL}}Response {
+  id: number;
+  // Add your response fields here
+  // Example:
+  // name: string;
+  // email: string;
+  // createdAt: Date;
+  // updatedAt: Date;
+}
+
+/**
+ * {{NAME_PASCAL}}Dto
+ * Response DTO for {{NAME_PASCAL}}Query with HATEOAS pagination
+ * Generated on: {{TIMESTAMP}}
+ * Feature: {{FEATURE_PASCAL}}
+ *
+ * Uses the reusable PaginatedResponse class for consistent API structure
+ */
+export class {{NAME_PASCAL}}Dto extends PaginatedResponse<{{NAME_PASCAL}}Response> {
+  constructor(
+    data: {{NAME_PASCAL}}Response[],
+    totalItems: number,
+    currentPage: number,
+    itemsPerPage: number,
+    baseUrl: string
+  ) {
+    super(
+      data,
+      totalItems,
+      { currentPage, itemsPerPage, totalItems },
+      {
+        baseUrl,
+        includeResourceLinks: true,
+        includeCreateLink: true,
+        resourceIdSelector: (item: {{NAME_PASCAL}}Response) => item.id,
+        // Add custom links if needed:
+        // customLinks: [
+        //   {
+        //     href: `${baseUrl}/export`,
+        //     method: 'GET',
+        //     rel: 'export',
+        //     title: 'Export {{NAME_PASCAL}}'
+        //   }
+        // ]
+      }
+    );
+  }
+}

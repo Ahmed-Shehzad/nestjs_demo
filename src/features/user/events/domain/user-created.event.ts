@@ -2,15 +2,27 @@ import { INotification } from '@/mediator/types/notification';
 
 /**
  * UserCreatedEvent
- * Domain Event - represents something significant that happened in the User domain
+ * Domain Event - represents that a new user has been created in the system
  * Generated on: 2025-10-10T17:23:10.906Z
  * Feature: User
  */
 export class UserCreatedEvent implements INotification {
-  constructor() {} // Example: public readonly version: number, // Example: public readonly occurredAt: Date = new Date(), // Example: public readonly aggregateId: string, // Add event data here
+  public readonly occurredAt: Date = new Date();
+  public readonly version: number = 1;
+
+  constructor(
+    public readonly userId: number,
+    public readonly email: string,
+    public readonly firstName: string | null,
+    public readonly lastName: string | null,
+  ) {}
 
   // Helper method to get event name
   get eventName(): string {
-    return 'User.UserCreated';
+    return 'User.Created';
+  }
+
+  get aggregateId(): string {
+    return this.userId.toString();
   }
 }

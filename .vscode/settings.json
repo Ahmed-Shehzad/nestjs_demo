@@ -1,0 +1,22 @@
+{
+  "typescript.preferences.includePackageJsonAutoImports": "on",
+  "typescript.suggest.autoImports": true,
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": "explicit"
+  },
+  "debug.allowBreakpointsEverywhere": true,
+  "debug.inlineValues": "auto",
+  "debug.showInlineBreakpointCandidates": true,
+  "debug.toolBarLocation": "floating",
+  "files.exclude": {
+    "**/dist": true,
+    "**/node_modules": true,
+    "**/.git": true,
+    "**/.DS_Store": true
+  },
+  "search.exclude": {
+    "**/dist": true,
+    "**/node_modules": true
+  }
+}

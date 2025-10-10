@@ -1,6 +1,6 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { INotificationHandler } from '@/mediator/types/notification';
 import { NotificationHandler } from '@/mediator/decorators/notification-handler.decorator';
+import { INotificationHandler } from '@/mediator/types/notification';
+import { Injectable, Logger } from '@nestjs/common';
 import { UserCreatedEvent } from './user-created.event';
 
 /**
@@ -20,16 +20,23 @@ export class UserCreatedEventHandler implements INotificationHandler<UserCreated
     this.logger.log(`Handling domain event: ${event.eventName}`);
 
     try {
-      // TODO: Implement event handling logic
+      // Log the user creation info message
+      console.info(`🎉 A new user has been created!`);
+      console.info(`📧 Email: ${event.email}`);
+      console.info(`👤 Name: ${event.firstName || 'N/A'} ${event.lastName || 'N/A'}`);
+      console.info(`🆔 User ID: ${event.userId}`);
+      console.info(`⏰ Created At: ${event.occurredAt.toISOString()}`);
 
-      // Example implementations:
-      // await this.notificationService.sendNotification(event.aggregateId);
-      // await this.auditService.logDomainEvent(event);
-      // await this.updateReadModel(event);
+      // Here you could add additional event handling logic:
+      // - Send welcome email
+      // - Update analytics/metrics
+      // - Create user profile in other services
+      // - Log to audit system
+      // - Update search indexes
 
-      this.logger.log(`Successfully handled domain event: ${event.eventName}`);
+      this.logger.log(`Successfully handled domain event: ${event.eventName} for user ${event.userId}`);
     } catch (error) {
-      this.logger.error(`Failed to handle domain event: ${event.eventName}`, error);
+      this.logger.error(`Failed to handle domain event: ${event.eventName} for user ${event.userId}`, error);
       throw error;
     }
   }

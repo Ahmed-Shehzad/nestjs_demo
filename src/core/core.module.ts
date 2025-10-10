@@ -1,31 +1,23 @@
-import { Module, Global } from '@nestjs/common';
+import { Global, Module } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
+import { PrismaService } from './prisma.service';
 
 /**
  * Core Module
  *
  * Global module that provides shared services across all features.
- * This includes database connections and other infrastructure concerns.
+ * This includes optimized database connections with proper connection pooling.
  */
 @Global()
 @Module({
   providers: [
+    PrismaService,
+    // Provide PrismaClient as an alias to PrismaService for backward compatibility
     {
       provide: PrismaClient,
-      useFactory: () => {
-        const prisma = new PrismaClient({
-          log: ['query', 'info', 'warn', 'error'],
-        });
-
-        // Optional: Add lifecycle hooks
-        prisma.$connect().catch((error) => {
-          console.error('Failed to connect to database:', error);
-        });
-
-        return prisma;
-      },
+      useExisting: PrismaService,
     },
   ],
-  exports: [PrismaClient],
+  exports: [PrismaService, PrismaClient],
 })
 export class CoreModule {}
