@@ -37,7 +37,9 @@
     "gen": "npm run generate:help",
     "gen:q": "ts-node scripts/generators/cli.ts --type query",
     "gen:c": "ts-node scripts/generators/cli.ts --type command",
-    "gen:de": "ts-node scripts/generators/cli.ts --type domain-event"
+    "gen:de": "ts-node scripts/generators/cli.ts --type domain-event",
+    "generate:prisma-client": "ts-node scripts/generators/prisma-client-generator.ts",
+    "gen:prisma-client": "ts-node scripts/generators/prisma-client-generator.ts"
   },
   "dependencies": {
     "@golevelup/nestjs-discovery": "^5.0.0",

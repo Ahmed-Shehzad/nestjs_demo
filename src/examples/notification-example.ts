@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { INotification, INotificationHandler } from '@/mediator/types/notification';
 import { NotificationHandler } from '@/mediator/decorators/notification-handler.decorator';
 import { NotificationPublisher } from '@/mediator/services/notification-publisher.service';
