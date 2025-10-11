@@ -1,7 +1,7 @@
+import { PrismaService } from '@/core/prisma.service';
 import { RequestHandler } from '@/mediator/decorators/request-handler.decorator';
 import { IQueryHandler } from '@/mediator/types/request';
 import { Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
 import { GetAllUsersDto, UserResponse } from './get-all-users.dto';
 import { GetAllUsersQuery } from './get-all-users.query';
 
@@ -14,7 +14,7 @@ import { GetAllUsersQuery } from './get-all-users.query';
 @Injectable()
 @RequestHandler(GetAllUsersQuery)
 export class GetAllUsersQueryHandler implements IQueryHandler<GetAllUsersQuery, GetAllUsersDto> {
-  constructor(private readonly prisma: PrismaClient) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async handleAsync(query: GetAllUsersQuery): Promise<GetAllUsersDto> {
     const { page, limit, baseUrl } = query;

@@ -1,7 +1,7 @@
+import { PrismaService } from '@/core/prisma.service';
 import { isProblemDetailsException } from '@/problem-details/exceptions/problem-details.exceptions';
 import { ProblemDetailsService } from '@/problem-details/services/problem-details.service';
 import { HttpStatus, Injectable } from '@nestjs/common';
-import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 
 /**
@@ -13,7 +13,7 @@ import * as bcrypt from 'bcrypt';
 @Injectable()
 export class UserService {
   constructor(
-    private readonly prisma: PrismaClient,
+    private readonly prisma: PrismaService,
     private readonly problemDetailsService: ProblemDetailsService,
   ) {
     // Ensure services are properly injected

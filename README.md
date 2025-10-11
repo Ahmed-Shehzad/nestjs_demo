@@ -1,137 +1,488 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 🚀 NestJS Enterprise CQRS API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+A production-ready NestJS application implementing **Clean Architecture**, **CQRS**, and **Domain-Driven Design** patterns with custom libraries for enterprise-grade development.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## 📋 Table of Contents
 
-## Description
+- [Features](#-features)
+- [Architecture](#-architecture)
+- [Quick Start](#-quick-start)
+- [Project Structure](#-project-structure)
+- [API Documentation](#-api-documentation)
+- [Development](#-development)
+- [Testing](#-testing)
+- [Deployment](#-deployment)
+- [Contributing](#-contributing)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## ✨ Features
 
-## Project setup
+### 🏗️ **Architecture & Patterns**
+
+- **CQRS (Command Query Responsibility Segregation)** - Complete separation of read/write operations
+- **Mediator Pattern** - Decoupled request/response handling with pipeline behaviors
+- **Clean Architecture** - Domain-driven design with clear layer separation
+- **Repository Pattern** - Data access abstraction via Prisma ORM
+
+### 🔧 **Custom Libraries**
+
+- **Fluent Validation** - Type-safe, chainable validation rules
+- **HATEOAS Support** - RFC-compliant hypermedia APIs
+- **Problem Details** - RFC 7807 standardized error responses
+- **Fluent Results** - Railway-oriented programming for error handling
+- **Pipeline Behaviors** - Logging, validation, and telemetry
+
+### 🛠️ **Developer Experience**
+
+- **Code Generators** - Automated CQRS component generation
+- **TypeScript** - Full type safety throughout the application
+- **Hot Reload** - Development server with watch mode
+- **Debug Support** - VS Code debugging configuration
+- **Docker Integration** - Containerized PostgreSQL databases
+
+### 🔒 **Production Ready**
+
+- **Global Exception Handling** - Consistent error responses
+- **Connection Pooling** - Optimized database connections
+- **Health Checks** - Application and database monitoring
+- **Structured Logging** - Request/response logging with timing
+- **OpenTelemetry** - Distributed tracing support
+
+## 🏛️ Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    HTTP Layer (Controllers)                 │
+├─────────────────────────────────────────────────────────────┤
+│                     Application Layer                       │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐     │
+│  │   Commands  │    │   Queries   │    │   Events    │     │
+│  └─────────────┘    └─────────────┘    └─────────────┘     │
+├─────────────────────────────────────────────────────────────┤
+│                    Mediator Pipeline                        │
+│     Logging → Validation → Telemetry → Handler             │
+├─────────────────────────────────────────────────────────────┤
+│                     Domain Layer                            │
+│  ┌─────────────┐    ┌─────────────┐    ┌─────────────┐     │
+│  │  Entities   │    │ Validators  │    │  Services   │     │
+│  └─────────────┘    └─────────────┘    └─────────────┘     │
+├─────────────────────────────────────────────────────────────┤
+│                 Infrastructure Layer                        │
+│           Prisma ORM → PostgreSQL Database                  │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### Pipeline Behaviors
+
+```
+Request → Logging → Validation → Telemetry → Handler → Response
+    ↓         ↓           ↓           ↓         ↓
+  Start    Validate   Performance  Business   Result
+  Timer    Input      Tracking     Logic     Logging
+```
+
+## 🚀 Quick Start
+
+### Prerequisites
+
+- **Node.js** 18+
+- **Docker** & Docker Compose
+- **PostgreSQL** (via Docker)
+
+### Installation
+
+1. **Clone the repository**
+
+   ```bash
+   git clone https://github.com/Ahmed-Shehzad/nestjs_demo.git
+   cd nestjs_demo
+   ```
+
+2. **Install dependencies**
+
+   ```bash
+   npm install
+   ```
+
+3. **Setup environment**
+
+   ```bash
+   # Copy environment template
+   cp .env.example .env
+
+   # Configure DATABASE_URL in .env
+   DATABASE_URL="postgresql://postgres:123@localhost:5434/nest"
+   ```
+
+4. **Start databases**
+
+   ```bash
+   # Start development database
+   npm run db:dev:up
+
+   # Run migrations
+   npm run prisma:dev:deploy
+   ```
+
+5. **Start development server**
+   ```bash
+   npm run start:dev
+   ```
+
+The API will be available at `http://localhost:3000`
+
+## 📁 Project Structure
+
+```
+src/
+├── core/                          # 🌍 Global infrastructure
+│   ├── core.module.ts            # Global module registration
+│   └── prisma.service.ts         # Database service
+├── features/                      # 🎯 Domain features
+│   ├── user/                     # User domain
+│   │   ├── commands/             # Write operations
+│   │   │   ├── create-user.command.ts
+│   │   │   ├── create-user.handler.ts
+│   │   │   └── create-user.validator.ts
+│   │   ├── queries/              # Read operations
+│   │   │   ├── get-all-users.query.ts
+│   │   │   ├── get-all-users.handler.ts
+│   │   │   ├── get-all-users.dto.ts
+│   │   │   └── get-all-users.validator.ts
+│   │   ├── events/               # Domain events
+│   │   ├── services/             # Domain services
+│   │   ├── user.controller.ts    # HTTP endpoints
+│   │   └── user.module.ts        # Feature module
+│   └── bookmark/                 # Bookmark domain
+├── lib/                          # 📚 Custom libraries
+│   ├── mediator/                 # CQRS mediator
+│   │   ├── services/
+│   │   ├── behaviors/            # Pipeline behaviors
+│   │   ├── decorators/           # Handler decorators
+│   │   └── types/               # Type definitions
+│   ├── fluent-validation/        # Validation system
+│   ├── hateoas/                  # Hypermedia APIs
+│   ├── problem-details/          # Error handling
+│   └── fluent-results/           # Result patterns
+├── examples/                     # 📖 Usage examples
+├── app.module.ts                 # Root module
+└── main.ts                      # Application bootstrap
+
+scripts/generators/               # 🔧 Code generators
+├── templates/                   # Code templates
+├── generator.ts                 # Main generator
+└── cli.ts                      # CLI interface
+
+prisma/
+├── schema.prisma               # Database schema
+└── migrations/                 # Migration history
+```
+
+## 📖 API Documentation
+
+### User Endpoints
+
+#### Get All Users (Paginated)
+
+```http
+GET /api/users?page=1&limit=10
+```
+
+**Response:**
+
+```json
+{
+  "data": [
+    {
+      "id": 1,
+      "email": "user@example.com",
+      "firstName": "John",
+      "lastName": "Doe",
+      "createdAt": "2025-10-11T...",
+      "updatedAt": "2025-10-11T...",
+      "bookmarksCount": 5
+    }
+  ],
+  "meta": {
+    "currentPage": 1,
+    "totalPages": 3,
+    "totalItems": 25,
+    "itemsPerPage": 10,
+    "hasNextPage": true,
+    "hasPreviousPage": false
+  },
+  "links": [
+    { "href": "/api/users?page=1&limit=10", "rel": "self", "method": "GET" },
+    { "href": "/api/users?page=2&limit=10", "rel": "next", "method": "GET" },
+    { "href": "/api/users?page=3&limit=10", "rel": "last", "method": "GET" },
+    { "href": "/api/users", "rel": "create", "method": "POST" }
+  ]
+}
+```
+
+#### Create User
+
+```http
+POST /api/users
+Content-Type: application/json
+
+{
+  "email": "user@example.com",
+  "firstName": "John",
+  "lastName": "Doe",
+  "password": "securepassword123"
+}
+```
+
+**Response:**
+
+```json
+{
+  "id": 1,
+  "success": true,
+  "message": "User created successfully",
+  "createdAt": "2025-10-11T..."
+}
+```
+
+### Error Responses (RFC 7807)
+
+```json
+{
+  "type": "https://example.com/problems/validation-error",
+  "title": "Validation Error",
+  "status": 400,
+  "detail": "The request contains invalid data",
+  "instance": "/api/users",
+  "timestamp": "2025-10-11T...",
+  "traceId": "req_123456789",
+  "errors": [
+    {
+      "field": "email",
+      "message": "Email must be a valid email address"
+    }
+  ]
+}
+```
+
+## 🛠️ Development
+
+### Available Scripts
 
 ```bash
-$ npm install
+# Development
+npm run start:dev          # Start with hot reload
+npm run start:debug        # Start in debug mode
+
+# Database
+npm run db:dev:up          # Start dev database
+npm run db:dev:restart     # Restart dev database
+npm run prisma:dev:deploy  # Run migrations
+
+# Code Generation
+npm run gen                # Show generator help
+npm run gen:q              # Generate query + handler + validator + DTO
+npm run gen:c              # Generate command + handler + validator
+npm run gen:de             # Generate domain event + handler
+
+# Testing
+npm run test               # Unit tests
+npm run test:e2e          # End-to-end tests
+npm run test:cov          # Test coverage
+
+# Production
+npm run build             # Build for production
+npm run start:prod        # Start production server
 ```
 
-## Compile and run the project
+### Code Generation
+
+Generate complete CQRS components automatically:
 
 ```bash
-# development
-$ npm run start
+# Generate a new query
+npm run gen:q
+? Enter the name: GetUserProfile
+? Enter the feature name: User
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Creates:
+# - get-user-profile.query.ts
+# - get-user-profile.handler.ts
+# - get-user-profile.validator.ts
+# - get-user-profile.dto.ts
 ```
 
-## Run tests
+### CQRS Pattern Usage
+
+#### Creating a Query
+
+```typescript
+// 1. Define Query
+export class GetUserByIdQuery implements IQuery<UserDto> {
+  constructor(public readonly userId: string) {}
+}
+
+// 2. Create Handler
+@Injectable()
+@RequestHandler(GetUserByIdQuery)
+export class GetUserByIdHandler implements IQueryHandler<GetUserByIdQuery, UserDto> {
+  constructor(private readonly prisma: PrismaClient) {}
+
+  async handleAsync(query: GetUserByIdQuery): Promise<UserDto> {
+    const user = await this.prisma.user.findUnique({
+      where: { id: parseInt(query.userId) }
+    });
+    return new UserDto(user);
+  }
+}
+
+// 3. Add Validation
+@Injectable()
+@ValidatorFor(GetUserByIdQuery)
+export class GetUserByIdValidator extends AbstractValidator<GetUserByIdQuery> {
+  constructor() {
+    super();
+    this.ruleFor(x => x.userId)
+      .mustBeDefined()
+      .mustBe(id => !isNaN(parseInt(id)))
+      .withMessage('User ID must be a valid number');
+  }
+}
+
+// 4. Use in Controller
+@Get(':id')
+async getUser(@Param('id') id: string): Promise<UserDto> {
+  const query = new GetUserByIdQuery(id);
+  return await this.mediator.sendAsync(query);
+}
+```
+
+### Environment Configuration
+
+Create `.env` file:
 
 ```bash
-# unit tests
-$ npm run test
+# Database
+DATABASE_URL="postgresql://postgres:123@localhost:5434/nest?schema=public&connection_limit=10&pool_timeout=20&connect_timeout=60"
 
-# e2e tests
-$ npm run test:e2e
+# Application
+PORT=3000
+NODE_ENV=development
 
-# test coverage
-$ npm run test:cov
+# Test Database
+TEST_DATABASE_URL="postgresql://postgres:123@localhost:5435/nest"
 ```
 
-## Code Generation
+## 🧪 Testing
 
-This project includes powerful code generators to quickly scaffold CQRS components with proper structure and templates.
-
-### Quick Start
+### Unit Tests
 
 ```bash
-# Show available generators and usage examples
-$ npm run generate:help
-
-# Interactive generator with prompts
-$ npm run generate
-
-# Direct generation (faster for experienced users)
-$ npm run generate:query -- --name GetUserProfile --feature user-management
-$ npm run generate:command -- --name CreateUser --feature user-management
-$ npm run generate:domain-event -- --name UserRegistered --feature user-management
+npm run test
+npm run test:watch
+npm run test:cov
 ```
 
-### Available Generators
-
-- **Query**: Generates query, DTO, validator, and handler files
-- **Command**: Generates command, validator, and handler files
-- **Domain Event**: Generates domain event and notification handler files
-
-### Generated Structure
-
-All generators create files in a feature-based structure:
-
-```
-src/features/{feature-name}/
-├── queries/           # Query components with DTOs and validators
-├── commands/          # Command components with validators
-└── events/
-    └── domain/        # Internal domain events with handlers
-```
-
-For detailed documentation, see [`docs/CODE_GENERATION.md`](docs/CODE_GENERATION.md).
-
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+### E2E Tests
 
 ```bash
-$ npm install -g @nestjs/mau
-$ mau deploy
+npm run test:e2e
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+### Test Structure
 
-## Resources
+```typescript
+describe('GetAllUsersHandler', () => {
+  let handler: GetAllUsersHandler;
+  let prisma: PrismaClient;
 
-Check out a few resources that may come in handy when working with NestJS:
+  beforeEach(async () => {
+    const module = await Test.createTestingModule({
+      providers: [GetAllUsersHandler, PrismaService],
+    }).compile();
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+    handler = module.get(GetAllUsersHandler);
+    prisma = module.get(PrismaClient);
+  });
 
-## Support
+  it('should return paginated users', async () => {
+    const query = new GetAllUsersQuery(1, 10, '/api/users');
+    const result = await handler.handleAsync(query);
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+    expect(result).toBeInstanceOf(GetAllUsersDto);
+    expect(result.data).toBeDefined();
+    expect(result.meta.currentPage).toBe(1);
+  });
+});
+```
 
-## Stay in touch
+## 🐳 Deployment
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Docker Production Build
 
-## License
+```dockerfile
+FROM node:18-alpine AS builder
+WORKDIR /app
+COPY package*.json ./
+RUN npm ci --only=production
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+FROM node:18-alpine AS production
+WORKDIR /app
+COPY --from=builder /app/node_modules ./node_modules
+COPY . .
+RUN npm run build
+EXPOSE 3000
+CMD ["npm", "run", "start:prod"]
+```
+
+### Environment Variables
+
+```bash
+# Production environment
+NODE_ENV=production
+DATABASE_URL="postgresql://user:pass@host:5432/db"
+PORT=3000
+```
+
+## 🤝 Contributing
+
+### Development Workflow
+
+1. **Fork the repository**
+2. **Create feature branch**: `git checkout -b feature/amazing-feature`
+3. **Generate code**: Use `npm run gen:*` for consistent structure
+4. **Write tests**: Follow existing test patterns
+5. **Commit changes**: Use conventional commits
+6. **Push to branch**: `git push origin feature/amazing-feature`
+7. **Open Pull Request**
+
+### Code Standards
+
+- **TypeScript**: Strict mode enabled
+- **ESLint**: Configured with Prettier
+- **Conventional Commits**: Required for releases
+- **Tests**: Minimum 80% coverage
+- **Documentation**: JSDoc for public APIs
+
+### Architecture Guidelines
+
+- **CQRS**: Separate read/write operations
+- **Single Responsibility**: One handler per request type
+- **Dependency Injection**: Use NestJS DI container
+- **Type Safety**: Leverage TypeScript fully
+- **Error Handling**: Use Problem Details format
+
+## 📚 Additional Resources
+
+- [NestJS Documentation](https://docs.nestjs.com/)
+- [Prisma Documentation](https://www.prisma.io/docs/)
+- [CQRS Pattern](https://docs.microsoft.com/en-us/azure/architecture/patterns/cqrs)
+- [Clean Architecture](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html)
+- [RFC 7807 - Problem Details](https://tools.ietf.org/html/rfc7807)
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+**Built with ❤️ using NestJS, TypeScript, and Clean Architecture principles**
