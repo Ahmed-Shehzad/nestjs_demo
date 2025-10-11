@@ -40,7 +40,7 @@ jobs:
         run: npm run format -- --check
 
       - name: 🔍 Lint code
-        run: npm run lint
+        run: npm run lint:ci
 
       - name: 🏗️ Type check
         run: npm run build

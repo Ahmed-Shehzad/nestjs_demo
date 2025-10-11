@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
 import { AbstractValidator } from './abstract.validator';
 import { ValidationResult } from './validation-result.validator';
 

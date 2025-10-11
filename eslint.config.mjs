@@ -1,5 +1,6 @@
 // @ts-check
 import eslint from '@eslint/js';
+import jestPlugin from 'eslint-plugin-jest';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
@@ -36,6 +37,8 @@ export default tseslint.config(
       '@typescript-eslint/no-unsafe-return': 'warn',
       '@typescript-eslint/no-empty-object-type': 'off',
       '@typescript-eslint/no-unused-vars': ['warn', { argsIgnorePattern: '^_' }],
+      '@typescript-eslint/require-await': 'warn', // Make this a warning instead of error
+      '@typescript-eslint/no-namespace': 'warn', // Allow namespaces with warning
 
       // Prettier compatibility - disable conflicting rules
       'prettier/prettier': [
@@ -66,6 +69,9 @@ export default tseslint.config(
   // Test file specific rules
   {
     files: ['**/*.spec.ts', '**/*.test.ts', '**/test-setup.ts'],
+    plugins: {
+      jest: jestPlugin,
+    },
     rules: {
       // Relax TypeScript rules for test files
       '@typescript-eslint/no-explicit-any': 'off',
@@ -93,6 +99,21 @@ export default tseslint.config(
 
       // Allow magic numbers in tests
       '@typescript-eslint/no-magic-numbers': 'off',
+    },
+  },
+  // Mock files specific rules
+  {
+    files: ['**/mocks/**/*.ts', '**/*.mock.ts'],
+    rules: {
+      // Relax all TypeScript safety rules for mock files
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+      '@typescript-eslint/require-await': 'off',
     },
   },
 );

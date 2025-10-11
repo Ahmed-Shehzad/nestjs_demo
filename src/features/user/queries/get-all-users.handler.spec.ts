@@ -43,7 +43,7 @@ describe('GetAllUsersQueryHandler', () => {
     }).compile();
 
     handler = module.get<GetAllUsersQueryHandler>(GetAllUsersQueryHandler);
-    prisma = module.get(PrismaService) as any;
+    prisma = module.get(PrismaService);
   });
 
   afterEach(() => {
