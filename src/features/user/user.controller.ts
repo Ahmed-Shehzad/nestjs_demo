@@ -1,7 +1,10 @@
+import { MediatorDiscoveryService } from '@/mediator/discovery/mediator-discovery.service';
 import type { IMediator } from '@/mediator/types/mediator';
 import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
+
+import { FluentResult } from '@/lib/fluent-results/types/fluent-results.types';
 import { CreateUserCommand } from './commands/create-user.command';
-import { CreateUserRequestDto } from './commands/create-user.dto';
+import { CreateUserRequest } from './commands/create-user.dto';
 import { GetAllUsersDto } from './queries/get-all-users.dto';
 import { GetAllUsersQuery } from './queries/get-all-users.query';
 
@@ -10,6 +13,7 @@ import { GetAllUsersQuery } from './queries/get-all-users.query';
  */
 interface CommandResponse {
   id: number;
+  success: boolean;
   message: string;
   createdAt: Date;
 }
@@ -20,7 +24,10 @@ interface CommandResponse {
  */
 @Controller('api/users')
 export class UsersController {
-  constructor(@Inject('IMediator') private readonly mediator: IMediator) {}
+  constructor(
+    @Inject('IMediator') private readonly mediator: IMediator,
+    private readonly discovery: MediatorDiscoveryService,
+  ) {}
 
   /**
    * Get all users with pagination and HATEOAS links
@@ -73,15 +80,7 @@ export class UsersController {
    * }
    */
   @Post()
-  async createUser(@Body() createUserDto: CreateUserRequestDto): Promise<CommandResponse> {
-    // 🔍 DEBUG: Controller entry point for user creation
-    console.log('🔍 [DEBUG] UsersController.createUser called with data:', {
-      email: createUserDto.email,
-      firstName: createUserDto.firstName,
-      lastName: createUserDto.lastName,
-      // Note: Password is intentionally excluded from debug logs for security
-    });
-
+  async createUser(@Body() createUserDto: CreateUserRequest): Promise<CommandResponse> {
     const command = new CreateUserCommand(
       createUserDto.email,
       createUserDto.firstName || null,
@@ -89,20 +88,17 @@ export class UsersController {
       createUserDto.password,
     );
 
-    // 🔍 DEBUG: Before mediator call
-    console.log('🔍 [DEBUG] Created command object for user creation');
-
     // CQRS principle: command returns only the ID
-    const userId = await this.mediator.sendAsync<number>(command);
-
-    // 🔍 DEBUG: After mediator call
-    console.log('🔍 [DEBUG] User created successfully with ID:', userId);
+    const result = await this.mediator.sendAsync<FluentResult<number>>(command);
 
     // Following CQRS principles: if we need full user data, we should use a separate query
     // For now, we'll return a simple response with just the ID and creation timestamp
     return {
-      id: userId,
-      message: 'User created successfully',
+      id: result.isSuccess ? result.value : 0,
+      success: result.isSuccess,
+      message: result.isSuccess
+        ? 'User created successfully'
+        : `User creation failed: ${JSON.stringify(result.error, null, 2)}`,
       createdAt: new Date(),
     };
   }

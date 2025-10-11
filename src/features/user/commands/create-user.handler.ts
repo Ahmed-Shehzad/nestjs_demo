@@ -1,10 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+import { FluentResult } from '@/fluent-results/types/fluent-results.types';
 import { RequestHandler } from '@/mediator/decorators/request-handler.decorator';
 import type { IMediator } from '@/mediator/types/mediator';
 import { ICommandHandler } from '@/mediator/types/request';
-import { ConflictException, Inject, Injectable } from '@nestjs/common';
+import { isProblemDetailsException } from '@/problem-details/exceptions/problem-details.exceptions';
+import { ProblemDetailsService } from '@/problem-details/services/problem-details.service';
+import { Inject, Injectable } from '@nestjs/common';
 import { PrismaClient } from '@prisma/client';
 import * as bcrypt from 'bcrypt';
 import { UserCreatedEvent } from '../events/domain/user-created.event';
@@ -19,13 +21,14 @@ import { CreateUserCommand } from './create-user.command';
  */
 @Injectable()
 @RequestHandler(CreateUserCommand)
-export class CreateUserCommandHandler implements ICommandHandler<CreateUserCommand, number> {
+export class CreateUserCommandHandler implements ICommandHandler<CreateUserCommand, FluentResult<number>> {
   constructor(
     private readonly prisma: PrismaClient,
     @Inject('IMediator') private readonly mediator: IMediator,
+    private readonly problemDetailsService: ProblemDetailsService,
   ) {}
 
-  async handleAsync(command: CreateUserCommand): Promise<number> {
+  async handleAsync(command: CreateUserCommand): Promise<FluentResult<number>> {
     const { email, firstName, lastName, password } = command;
 
     try {
@@ -37,7 +40,7 @@ export class CreateUserCommandHandler implements ICommandHandler<CreateUserComma
         });
 
         if (existingUser) {
-          throw new ConflictException(`User with email '${email}' already exists`);
+          throw this.problemDetailsService.createDuplicateEmail(email);
         }
 
         // Hash the password
@@ -53,29 +56,25 @@ export class CreateUserCommandHandler implements ICommandHandler<CreateUserComma
             hash: hashedPassword,
           },
         });
+        console.log('✅ User created successfully with ID:', newUser.id);
 
-        // Publish domain event before transaction commit
-        // This ensures the event is published only if the transaction succeeds
-        const userCreatedEvent = new UserCreatedEvent(newUser.id, newUser.email, newUser.firstName, newUser.lastName);
-
-        // Note: Publishing the event here ensures it's published before transaction commit
-        // If you need to publish after commit, move this outside the transaction
-        await this.mediator.publishAsync(userCreatedEvent);
+        await this.mediator.publishAsync(
+          new UserCreatedEvent(newUser.id, newUser.email, newUser.firstName, newUser.lastName),
+        );
 
         return newUser;
       });
 
       // CQRS principle: commands return only ID, not full data
-      return result.id;
+      return FluentResult.success(result.id);
     } catch (error) {
-      // Re-throw ConflictException as-is
-      if (error instanceof ConflictException) {
+      // Re-throw Problem Details exceptions
+      if (isProblemDetailsException(error)) {
         throw error;
       }
-
-      // Log and re-throw other errors
-      console.error('Error creating user:', error);
-      throw new Error('Failed to create user. Please try again.');
+      return FluentResult.failure<number>('An error occurred while creating the user.', 'USER_CREATION_FAILED', {
+        ...error,
+      });
     }
   }
 }

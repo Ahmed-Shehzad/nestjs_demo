@@ -24,7 +24,9 @@
       "@/*": ["./src/*"],
       "@/mediator/*": ["./src/lib/mediator/*"],
       "@/fluent-validation/*": ["./src/lib/fluent-validation/*"],
+      "@/fluent-results/*": ["./src/lib/fluent-results/*"],
       "@/hateoas/*": ["./src/lib/hateoas/*"],
+      "@/problem-details/*": ["./src/lib/problem-details/*"],
       "@/features/*": ["./src/features/*"],
       "@/config/*": ["./src/config/*"]
     }

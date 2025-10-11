@@ -1,24 +1,27 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from 'class-validator';
+import { IsOptional, IsString } from 'class-validator';
 
 /**
- * CreateUserRequestDto
+ * CreateUserRequest
  * Data Transfer Object for creating a new user
+ *
+ * Note: Minimal class-validator decorators are used only for property mapping.
+ * All validation logic is handled by CreateUserRequestValidator using fluent validation.
  */
-export class CreateUserRequestDto {
-  @IsEmail({}, { message: 'Email must be a valid email address' })
-  @IsNotEmpty({ message: 'Email is required' })
+export class CreateUserRequest {
+  @IsOptional()
+  @IsString()
   email: string;
 
   @IsOptional()
-  @IsString({ message: 'First name must be a string' })
+  @IsString()
   firstName?: string;
 
   @IsOptional()
-  @IsString({ message: 'Last name must be a string' })
+  @IsString()
   lastName?: string;
 
-  @IsNotEmpty({ message: 'Password is required' })
-  @MinLength(6, { message: 'Password must be at least 6 characters long' })
+  @IsOptional()
+  @IsString()
   password: string;
 }
 

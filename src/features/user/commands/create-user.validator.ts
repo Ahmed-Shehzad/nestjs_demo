@@ -15,24 +15,38 @@ export class CreateUserCommandValidator extends AbstractValidator<CreateUserComm
   constructor() {
     super();
 
+    // Email validation
     this.ruleFor((x) => x.email)
       .mustBeDefined()
-      .withMessage('Email is required')
-      .mustBe((email) => /\S+@\S+\.\S+/.test(email))
+      .withMessage('Email must be defined')
+      .notEmpty()
+      .withMessage('Email must be a non-empty string')
+      .email()
       .withMessage('Email must be a valid email address');
 
+    // Password validation
     this.ruleFor((x) => x.password)
       .mustBeDefined()
-      .withMessage('Password is required')
-      .mustBe((password) => password.length >= 6)
+      .withMessage('Password must be defined')
+      .notEmpty()
+      .withMessage('Password must be a non-empty string')
+      .mustBe((password) => !password || password.length >= 6)
       .withMessage('Password must be at least 6 characters long');
 
     this.ruleFor((x) => x.firstName)
-      .mustBe((firstName) => !firstName || firstName.length > 0)
-      .withMessage('First name cannot be empty string');
+      .mustBeDefined()
+      .withMessage('First name must be defined')
+      .notEmpty()
+      .withMessage('First name must be a non-empty string')
+      .mustBe((firstName) => !firstName || firstName.trim().length > 0)
+      .withMessage('First name must be a valid name');
 
     this.ruleFor((x) => x.lastName)
-      .mustBe((lastName) => !lastName || lastName.length > 0)
-      .withMessage('Last name cannot be empty string');
+      .mustBeDefined()
+      .withMessage('Last name must be defined')
+      .notEmpty()
+      .withMessage('Last name must be a non-empty string')
+      .mustBe((lastName) => !lastName || lastName.trim().length > 0)
+      .withMessage('Last name must be a valid name');
   }
 }

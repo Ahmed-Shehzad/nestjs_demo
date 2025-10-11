@@ -1,3 +1,4 @@
+import { FluentResult } from '@/fluent-results/types/fluent-results.types';
 import { ICommand } from '@/mediator/types/request';
 
 /**
@@ -7,7 +8,7 @@ import { ICommand } from '@/mediator/types/request';
  * Generated on: 2025-10-10T17:23:10.898Z
  * Feature: User
  */
-export class CreateUserCommand implements ICommand<number> {
+export class CreateUserCommand implements ICommand<FluentResult<number>> {
   constructor(
     public readonly email: string,
     public readonly firstName: string | null,

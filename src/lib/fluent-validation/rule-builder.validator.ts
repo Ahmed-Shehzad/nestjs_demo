@@ -23,7 +23,7 @@ export class RuleBuilder<T, TProperty> implements IRuleBuilder<T, TProperty> {
 
   notEmpty(): IRuleBuilder<T, TProperty> {
     this.rules.push((value: TProperty) => {
-      if (value === null || value === undefined || value === '') {
+      if (!value && typeof value === 'string' && value.trim() === '') {
         const message = this.customMessage ?? `'${this.propertyName}' must not be empty.`;
         return new ValidationFailure(this.propertyName, message);
       }
