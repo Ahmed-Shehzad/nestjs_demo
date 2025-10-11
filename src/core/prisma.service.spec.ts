@@ -1,6 +1,18 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { PrismaService } from './prisma.service';
 
+// Mock @prisma/client to prevent any database connections during unit tests
+jest.mock('@prisma/client', () => ({
+  PrismaClient: class MockPrismaClient {
+    constructor() {
+      // Mock constructor
+    }
+    $connect = jest.fn().mockResolvedValue(undefined);
+    $disconnect = jest.fn().mockResolvedValue(undefined);
+    $queryRaw = jest.fn().mockResolvedValue([{ '?column?': 1 }]);
+  },
+}));
+
 describe('PrismaService', () => {
   let service: PrismaService;
 
@@ -11,13 +23,13 @@ describe('PrismaService', () => {
 
     service = module.get<PrismaService>(PrismaService);
 
-    // Mock the database connection methods to prevent real connections in tests
+    // Ensure all methods are properly mocked
     jest.spyOn(service, '$connect').mockResolvedValue(undefined);
     jest.spyOn(service, '$disconnect').mockResolvedValue(undefined);
+    jest.spyOn(service, '$queryRaw').mockResolvedValue([{ '?column?': 1 }]);
   });
 
   afterEach(() => {
-    // Clear all mocks after each test
     jest.clearAllMocks();
   });
 
