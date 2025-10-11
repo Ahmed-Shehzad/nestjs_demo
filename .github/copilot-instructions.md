@@ -18,6 +18,8 @@
   - `npm run gen:de` - Generate domain event + handler
   - `npm run gen` - Show generator help
 - **Database**: Managed via Docker (`npm run db:dev:up`) and Prisma migrations (`npm run prisma:dev:deploy`).
+- **CI/CD**: GitHub Actions workflows for automated testing, building, and deployment.
+- **Deployment**: Production deployment via Docker containers with automated scripts.
 
 ## Project-Specific Conventions
 
@@ -36,6 +38,9 @@
 - **Prisma ORM**: Database access via `core/prisma.service.ts` and `prisma/schema.prisma`.
 - **Docker**: PostgreSQL managed via Docker Compose (`docker-compose.yml`).
 - **OpenTelemetry**: Distributed tracing integrated in pipeline behaviors.
+- **CI/CD Pipeline**: GitHub Actions in `.github/workflows/` for automated testing, security scanning, and deployment.
+- **Container Registry**: Images pushed to GitHub Container Registry (ghcr.io).
+- **Production Stack**: Nginx reverse proxy, PostgreSQL database, Redis cache, and application containers.
 
 ## Examples & Key Files
 
