@@ -113,9 +113,9 @@ jobs:
 
     env:
       NODE_ENV: test
-      # Mock database URL for unit tests (prevents real connections)
-      DATABASE_URL: postgresql://test:test@localhost:5432/test_db
-      TEST_DATABASE_URL: postgresql://test:test@localhost:5432/test_db
+      # Dummy database URL for unit tests (prevents real connections)
+      DATABASE_URL: postgresql://dummy:dummy@dummy:5432/dummy
+      TEST_DATABASE_URL: postgresql://dummy:dummy@dummy:5432/dummy
 
     steps:
       - name: 📥 Checkout code
@@ -131,8 +131,6 @@ jobs:
         run: npm ci
 
       - name: 🔧 Generate Prisma client (for types only)
-        env:
-          DATABASE_URL: postgresql://dummy:dummy@dummy:5432/dummy
         run: npx prisma generate
 
       - name: 🧪 Run unit tests with coverage

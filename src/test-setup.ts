@@ -5,8 +5,9 @@ import 'reflect-metadata';
 
 // Set test environment variables to prevent real database connections
 process.env.NODE_ENV = 'test';
-process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test_db';
-process.env.TEST_DATABASE_URL = 'postgresql://test:test@localhost:5432/test_db';
+// Only set dummy URLs if not already set by CI environment
+process.env.DATABASE_URL = process.env.DATABASE_URL || 'postgresql://dummy:dummy@dummy:5432/dummy';
+process.env.TEST_DATABASE_URL = process.env.TEST_DATABASE_URL || 'postgresql://dummy:dummy@dummy:5432/dummy';
 
 // Global test timeout (30 seconds for integration tests)
 jest.setTimeout(30000);
