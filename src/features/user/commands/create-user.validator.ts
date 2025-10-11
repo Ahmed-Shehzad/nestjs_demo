@@ -32,9 +32,9 @@ export class CreateUserCommandValidator extends AbstractValidator<CreateUserComm
       .withMessage('Password must be defined')
       .notEmpty()
       .withMessage('Password must be a non-empty string')
-      .mustBe((password) => password.length >= 6)
+      .mustBe((password) => !password || password.length >= 6)
       .withMessage('Password must be at least 6 characters long')
-      .mustBe((password) => password.length <= 128)
+      .mustBe((password) => !password || password.length <= 128)
       .withMessage('Password must not exceed 128 characters');
 
     // firstName validation - optional
