@@ -1,5 +1,6 @@
+import { ApiProperty } from '@nestjs/swagger';
 import { HateoasLinkBuilder } from '../services/hateoas-link-builder.service';
-import { HateoasLink, HateoasLinkConfig, PaginationConfig, PaginationMeta } from '../types/hateoas.types';
+import type { HateoasLink, HateoasLinkConfig, PaginationConfig, PaginationMeta } from '../types/hateoas.types';
 
 /**
  * Generic Paginated Response with HATEOAS support
@@ -36,8 +37,34 @@ import { HateoasLink, HateoasLinkConfig, PaginationConfig, PaginationMeta } from
  * ```
  */
 export class PaginatedResponse<T> {
+  @ApiProperty({
+    description: 'Array of paginated data items',
+    isArray: true,
+  })
   public readonly data: T[];
+
+  @ApiProperty({
+    description: 'Pagination metadata',
+    example: {
+      currentPage: 1,
+      itemsPerPage: 10,
+      totalItems: 100,
+      totalPages: 10,
+      hasNextPage: true,
+      hasPreviousPage: false,
+    },
+  })
   public readonly meta: PaginationMeta;
+
+  @ApiProperty({
+    description: 'HATEOAS hypermedia links',
+    type: [Object],
+    example: [
+      { href: '/api/users?page=1&limit=10', method: 'GET', rel: 'self' },
+      { href: '/api/users?page=2&limit=10', method: 'GET', rel: 'next' },
+      { href: '/api/users?page=10&limit=10', method: 'GET', rel: 'last' },
+    ],
+  })
   public readonly links: HateoasLink[];
 
   constructor(data: T[], totalItems: number, pagination: PaginationConfig, hateoasConfig: HateoasLinkConfig) {
