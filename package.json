@@ -95,6 +95,9 @@
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
     },
+    "transformIgnorePatterns": [
+      "node_modules/(?!(@faker-js/faker)/)"
+    ],
     "collectCoverageFrom": [
       "**/*.(t|j)s",
       "!**/*.d.ts",
