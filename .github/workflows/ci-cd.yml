@@ -131,6 +131,8 @@ jobs:
         run: npm ci
 
       - name: 🔧 Generate Prisma client (for types only)
+        env:
+          DATABASE_URL: postgresql://dummy:dummy@dummy:5432/dummy
         run: npx prisma generate
 
       - name: 🧪 Run unit tests with coverage
