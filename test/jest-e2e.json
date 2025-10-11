@@ -5,5 +5,21 @@
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
-  }
+  },
+  "moduleNameMapper": {
+    "^@/mediator/(.*)$": "<rootDir>/../src/lib/mediator/$1",
+    "^@/fluent-validation/(.*)$": "<rootDir>/../src/lib/fluent-validation/$1",
+    "^@/fluent-results/(.*)$": "<rootDir>/../src/lib/fluent-results/$1",
+    "^@/hateoas/(.*)$": "<rootDir>/../src/lib/hateoas/$1",
+    "^@/problem-details/(.*)$": "<rootDir>/../src/lib/problem-details/$1",
+    "^@/features/(.*)$": "<rootDir>/../src/features/$1",
+    "^@/core/(.*)$": "<rootDir>/../src/core/$1",
+    "^@/config/(.*)$": "<rootDir>/../src/config/$1",
+    "^@/(.*)$": "<rootDir>/../src/$1"
+  },
+  "setupFilesAfterEnv": ["<rootDir>/setup-e2e.ts"],
+  "testTimeout": 30000,
+  "maxWorkers": 1,
+  "forceExit": true,
+  "detectOpenHandles": true
 }

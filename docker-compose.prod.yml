@@ -1,8 +1,6 @@
 # 🐳 Production Docker Compose Configuration
 # Includes the application, database, and monitoring services
 
-version: '3.8'
-
 services:
   # ==========================================
   # NestJS Application
