@@ -1,4 +1,4 @@
-import { PaginatedResponse } from '../../../lib/hateoas/responses/paginated.response';
+import { PaginatedResponse } from '@/lib/hateoas/responses/paginated.response';
 
 /**
  * User Response Type (without sensitive data)

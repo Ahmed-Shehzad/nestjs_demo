@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/unbound-method */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
 import { PrismaService } from '@/core/prisma.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { GetAllUsersDto } from './get-all-users.dto';
@@ -64,20 +62,23 @@ describe('GetAllUsersQueryHandler', () => {
       const result = await handler.handleAsync(query);
 
       // Assert
-      expect(result).toBeInstanceOf(GetAllUsersDto);
-      expect(result.data).toHaveLength(2);
-      expect(result.data[0]).toEqual({
-        id: 1,
-        email: 'user1@example.com',
-        firstName: 'John',
-        lastName: 'Doe',
-        createdAt: expect.any(Date),
-        updatedAt: expect.any(Date),
-        bookmarksCount: 3,
-      });
-      expect(result.meta.totalItems).toBe(2);
-      expect(result.meta.currentPage).toBe(1);
-      expect(result.meta.itemsPerPage).toBe(10);
+      expect(result.isSuccess).toBe(true);
+      if (result.isSuccess) {
+        expect(result.value).toBeInstanceOf(GetAllUsersDto);
+        expect(result.value.data).toHaveLength(2);
+        expect(result.value.data[0]).toEqual({
+          id: 1,
+          email: 'user1@example.com',
+          firstName: 'John',
+          lastName: 'Doe',
+          createdAt: expect.any(Date),
+          updatedAt: expect.any(Date),
+          bookmarksCount: 3,
+        });
+        expect(result.value.meta.totalItems).toBe(2);
+        expect(result.value.meta.currentPage).toBe(1);
+        expect(result.value.meta.itemsPerPage).toBe(10);
+      }
     });
 
     it('should call prisma with correct pagination parameters', async () => {
@@ -194,8 +195,11 @@ describe('GetAllUsersQueryHandler', () => {
       const result = await resultPromise;
 
       // Assert
-      expect(result.data).toHaveLength(2);
-      expect(result.meta.totalItems).toBe(2);
+      expect(result.isSuccess).toBe(true);
+      if (result.isSuccess) {
+        expect(result.value.data).toHaveLength(2);
+        expect(result.value.meta.totalItems).toBe(2);
+      }
     });
 
     it('should handle database errors gracefully', async () => {
@@ -210,11 +214,11 @@ describe('GetAllUsersQueryHandler', () => {
       const result = await handler.handleAsync(query);
 
       // Assert
-      expect(result).toBeInstanceOf(GetAllUsersDto);
-      expect(result.data).toHaveLength(0);
-      expect(result.meta.totalItems).toBe(0);
-      expect(result.meta.currentPage).toBe(1);
-      expect(result.meta.itemsPerPage).toBe(10);
+      expect(result.isSuccess).toBe(false);
+      if (!result.isSuccess) {
+        expect(result.error.message).toBe('An error occurred while fetching users.');
+        expect(result.error.code).toBe('USER_FETCH_FAILED');
+      }
       expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching users:', expect.any(Error));
 
       consoleErrorSpy.mockRestore();
@@ -237,9 +241,12 @@ describe('GetAllUsersQueryHandler', () => {
       const result = await handler.handleAsync(query);
 
       // Assert
-      expect(result.data[0]).not.toHaveProperty('hash');
-      expect(result.data[0]).toHaveProperty('bookmarksCount', 3);
-      expect(result.data[0]).not.toHaveProperty('_count');
+      expect(result.isSuccess).toBe(true);
+      if (result.isSuccess) {
+        expect(result.value.data[0]).not.toHaveProperty('hash');
+        expect(result.value.data[0]).toHaveProperty('bookmarksCount', 3);
+        expect(result.value.data[0]).not.toHaveProperty('_count');
+      }
     });
 
     it('should return empty result for no users', async () => {
@@ -253,12 +260,15 @@ describe('GetAllUsersQueryHandler', () => {
       const result = await handler.handleAsync(query);
 
       // Assert
-      expect(result).toBeInstanceOf(GetAllUsersDto);
-      expect(result.data).toHaveLength(0);
-      expect(result.meta.totalItems).toBe(0);
-      expect(result.meta.totalPages).toBe(0);
-      expect(result.meta.hasNextPage).toBe(false);
-      expect(result.meta.hasPreviousPage).toBe(false);
+      expect(result.isSuccess).toBe(true);
+      if (result.isSuccess) {
+        expect(result.value).toBeInstanceOf(GetAllUsersDto);
+        expect(result.value.data).toHaveLength(0);
+        expect(result.value.meta.totalItems).toBe(0);
+        expect(result.value.meta.totalPages).toBe(0);
+        expect(result.value.meta.hasNextPage).toBe(false);
+        expect(result.value.meta.hasPreviousPage).toBe(false);
+      }
     });
 
     it('should calculate pagination metadata correctly', async () => {
@@ -272,14 +282,17 @@ describe('GetAllUsersQueryHandler', () => {
       const result = await handler.handleAsync(query);
 
       // Assert
-      expect(result.meta).toEqual({
-        currentPage: 2,
-        totalPages: 3, // Math.ceil(7 / 3)
-        totalItems: 7,
-        itemsPerPage: 3,
-        hasNextPage: true, // 2 < 3
-        hasPreviousPage: true, // 2 > 1
-      });
+      expect(result.isSuccess).toBe(true);
+      if (result.isSuccess) {
+        expect(result.value.meta).toEqual({
+          currentPage: 2,
+          totalPages: 3, // Math.ceil(7 / 3)
+          totalItems: 7,
+          itemsPerPage: 3,
+          hasNextPage: true, // 2 < 3
+          hasPreviousPage: true, // 2 > 1
+        });
+      }
     });
   });
 });

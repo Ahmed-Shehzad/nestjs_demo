@@ -1,4 +1,5 @@
 import { PrismaService } from '@/core/prisma.service';
+import { FluentResult } from '@/fluent-results/types/fluent-results.types';
 import { RequestHandler } from '@/mediator/decorators/request-handler.decorator';
 import { IQueryHandler } from '@/mediator/types/request';
 import { Injectable } from '@nestjs/common';
@@ -13,10 +14,10 @@ import { GetAllUsersQuery } from './get-all-users.query';
  */
 @Injectable()
 @RequestHandler(GetAllUsersQuery)
-export class GetAllUsersQueryHandler implements IQueryHandler<GetAllUsersQuery, GetAllUsersDto> {
+export class GetAllUsersQueryHandler implements IQueryHandler<GetAllUsersQuery, FluentResult<GetAllUsersDto>> {
   constructor(private readonly prisma: PrismaService) {}
 
-  async handleAsync(query: GetAllUsersQuery): Promise<GetAllUsersDto> {
+  async handleAsync(query: GetAllUsersQuery): Promise<FluentResult<GetAllUsersDto>> {
     const { page, limit, baseUrl } = query;
 
     // Ensure positive values and reasonable limits
@@ -68,13 +69,15 @@ export class GetAllUsersQueryHandler implements IQueryHandler<GetAllUsersQuery, 
         // Note: We exclude the hash field for security reasons
       }));
 
-      return new GetAllUsersDto(transformedUsers, totalCount, currentPage, itemsPerPage, baseUrl);
+      return FluentResult.success(new GetAllUsersDto(transformedUsers, totalCount, currentPage, itemsPerPage, baseUrl));
     } catch (error) {
       // Log the error for debugging (you might want to use a proper logger)
       console.error('Error fetching users:', error);
 
       // Return empty result with proper structure on error
-      return new GetAllUsersDto([], 0, currentPage, itemsPerPage, baseUrl);
+      return FluentResult.failure<GetAllUsersDto>('An error occurred while fetching users.', 'USER_FETCH_FAILED', {
+        ...error,
+      });
     }
   }
 }

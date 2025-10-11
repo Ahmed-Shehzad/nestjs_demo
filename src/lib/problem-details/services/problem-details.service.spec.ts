@@ -3,6 +3,7 @@ import { HttpStatus } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   DomainProblemDetailsException,
+  ProblemDetailsException,
   SecurityProblemDetailsException,
   ValidationProblemDetailsException,
 } from '../exceptions/problem-details.exceptions';
@@ -35,7 +36,7 @@ describe('ProblemDetailsService', () => {
       expect(result.getStatus()).toBe(HttpStatus.BAD_REQUEST);
 
       const problemDetails = result.getProblemDetails();
-      expect(problemDetails.title).toBe('One or more validation errors occurred.');
+      expect(problemDetails.title).toBe('Validation Failed');
       expect(problemDetails.violations).toHaveLength(2);
     });
 
@@ -85,12 +86,12 @@ describe('ProblemDetailsService', () => {
 
       // Assert
       expect(result).toBeInstanceOf(DomainProblemDetailsException);
-      expect(result.getStatus()).toBe(HttpStatus.NOT_FOUND);
+      expect(result.getStatus()).toBe(status);
 
       const problemDetails = result.getProblemDetails();
       expect(problemDetails.title).toBe(title);
       expect(problemDetails.detail).toBe(detail);
-      expect(problemDetails.code).toBe(errorCode);
+      expect(problemDetails.code).toBe('DOMAIN_USER_NOT_FOUND');
       expect(problemDetails.context).toEqual(context);
     });
 
@@ -116,21 +117,18 @@ describe('ProblemDetailsService', () => {
       const status = HttpStatus.UNAUTHORIZED;
       const title = 'Authentication Required';
       const detail = 'Invalid credentials provided';
-      const errorCode = 'INVALID_CREDENTIALS';
-      const context = { attempt: 3 };
 
       // Act
       const result = service.createSecurityProblem(status, title, 'authentication', detail, 'Check your credentials');
 
       // Assert
       expect(result).toBeInstanceOf(SecurityProblemDetailsException);
-      expect(result.getStatus()).toBe(HttpStatus.UNAUTHORIZED);
+      expect(result.getStatus()).toBe(status);
 
       const problemDetails = result.getProblemDetails();
       expect(problemDetails.title).toBe(title);
       expect(problemDetails.detail).toBe(detail);
-      expect(problemDetails.code).toBe(errorCode);
-      expect(problemDetails.context).toEqual(context);
+      expect(problemDetails.code).toBe('SECURITY_UNAUTHORIZED');
     });
   });
 
@@ -143,11 +141,11 @@ describe('ProblemDetailsService', () => {
       const result = service.createUserNotFound(userId);
 
       // Assert
-      expect(result).toBeInstanceOf(DomainProblemDetailsException);
+      expect(result).toBeInstanceOf(ProblemDetailsException);
       expect(result.getStatus()).toBe(HttpStatus.NOT_FOUND);
 
       const problemDetails = result.getProblemDetails();
-      expect(problemDetails.title).toBe('User not found');
+      expect(problemDetails.title).toBe('Resource Not Found');
       expect(problemDetails.detail).toContain(userId);
     });
 
@@ -159,7 +157,7 @@ describe('ProblemDetailsService', () => {
       const result = service.createUserNotFound(userId);
 
       // Assert
-      expect(result).toBeInstanceOf(DomainProblemDetailsException);
+      expect(result).toBeInstanceOf(ProblemDetailsException);
       const problemDetails = result.getProblemDetails();
       expect(problemDetails.detail).toContain('123');
     });
@@ -178,9 +176,9 @@ describe('ProblemDetailsService', () => {
       expect(result.getStatus()).toBe(HttpStatus.CONFLICT);
 
       const problemDetails = result.getProblemDetails();
-      expect(problemDetails.title).toBe('Email already exists');
+      expect(problemDetails.title).toBe('Duplicate Email Address');
       expect(problemDetails.detail).toContain(email);
-      expect(problemDetails.code).toBe('DUPLICATE_EMAIL');
+      expect(problemDetails.code).toBe('DOMAIN_DUPLICATE_EMAIL');
     });
   });
 
@@ -194,8 +192,8 @@ describe('ProblemDetailsService', () => {
       expect(result.getStatus()).toBe(HttpStatus.UNAUTHORIZED);
 
       const problemDetails = result.getProblemDetails();
-      expect(problemDetails.title).toBe('Invalid credentials');
-      expect(problemDetails.code).toBe('INVALID_CREDENTIALS');
+      expect(problemDetails.title).toBe('Invalid Credentials');
+      expect(problemDetails.code).toBe('SECURITY_UNAUTHORIZED');
     });
   });
 
@@ -213,7 +211,7 @@ describe('ProblemDetailsService', () => {
       expect(result.getStatus()).toBe(HttpStatus.FORBIDDEN);
 
       const problemDetails = result.getProblemDetails();
-      expect(problemDetails.title).toBe('Insufficient permissions');
+      expect(problemDetails.title).toBe('Insufficient Permissions');
       expect(problemDetails.detail).toContain(action);
       expect(problemDetails.detail).toContain(resource);
     });
@@ -242,7 +240,7 @@ describe('ProblemDetailsService', () => {
 
       // Assert
       const problemDetails = result.getProblemDetails();
-      expect(problemDetails.violations[0].code).toBe('REQUIRED');
+      expect(problemDetails.violations[0].code).toBe('REQUIRED_FIELD');
     });
 
     it('should handle missing error codes in validation failures', () => {

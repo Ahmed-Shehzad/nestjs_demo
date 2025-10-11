@@ -1,9 +1,9 @@
-import { Injectable, OnModuleInit } from '@nestjs/common';
+import { AbstractValidator } from '@/fluent-validation/abstract.validator';
 import { DiscoveryService } from '@golevelup/nestjs-discovery';
+import { Injectable, OnModuleInit } from '@nestjs/common';
+import { NOTIFICATION_HANDLER_METADATA } from '../decorators/notification-handler.decorator';
 import { REQUEST_HANDLER_METADATA } from '../decorators/request-handler.decorator';
 import { VALIDATOR_FOR_METADATA } from '../decorators/validator.decorator';
-import { NOTIFICATION_HANDLER_METADATA } from '../decorators/notification-handler.decorator';
-import { AbstractValidator } from '@/lib/fluent-validation/abstract.validator';
 import { INotificationHandler } from '../types/notification';
 
 /**

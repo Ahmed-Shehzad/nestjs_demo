@@ -2,7 +2,7 @@ import { MediatorDiscoveryService } from '@/mediator/discovery/mediator-discover
 import type { IMediator } from '@/mediator/types/mediator';
 import { Body, Controller, Get, Inject, Post, Query, Version } from '@nestjs/common';
 
-import { FluentResult } from '@/lib/fluent-results/types/fluent-results.types';
+import { FluentResult } from '@/fluent-results/types/fluent-results.types';
 import { CreateUserCommand } from './commands/create-user.command';
 import { CreateUserRequest } from './commands/create-user.dto';
 import { GetAllUsersDto } from './queries/get-all-users.dto';
@@ -32,7 +32,10 @@ export class UsersController {
    */
   @Get()
   @Version(['1', '2'])
-  async getAllUsers(@Query('page') page?: string, @Query('limit') limit?: string): Promise<GetAllUsersDto> {
+  async getAllUsers(
+    @Query('page') page?: string,
+    @Query('limit') limit?: string,
+  ): Promise<FluentResult<GetAllUsersDto>> {
     // 🔍 DEBUG: Controller entry point - set breakpoint here to test debugging
     console.log('🔍 [DEBUG] UsersController.getAllUsers called with params:', { page, limit });
 
@@ -50,7 +53,7 @@ export class UsersController {
     // 🔍 DEBUG: Before mediator call - set breakpoint here to inspect query object
     console.log('🔍 [DEBUG] Created query object:', query);
 
-    const result = await this.mediator.sendAsync<GetAllUsersDto>(query);
+    const result = await this.mediator.sendAsync<FluentResult<GetAllUsersDto>>(query);
 
     // 🔍 DEBUG: After mediator call - set breakpoint here to inspect result
     console.log('🔍 [DEBUG] Mediator result received:', { resultType: typeof result, hasData: !!result });

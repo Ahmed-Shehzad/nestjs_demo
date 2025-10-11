@@ -1,7 +1,7 @@
+import { FluentResult } from '@/fluent-results/types/fluent-results.types';
+import { MediatorDiscoveryService } from '@/mediator/discovery/mediator-discovery.service';
+import { IMediator } from '@/mediator/types/mediator';
 import { Test, TestingModule } from '@nestjs/testing';
-import { FluentResult } from '../../lib/fluent-results/types/fluent-results.types';
-import { MediatorDiscoveryService } from '../../lib/mediator/discovery/mediator-discovery.service';
-import { IMediator } from '../../lib/mediator/types/mediator';
 import { CreateUserRequest } from './commands/create-user.dto';
 import { GetAllUsersDto } from './queries/get-all-users.dto';
 import { UsersController } from './user.controller';
@@ -177,12 +177,11 @@ describe('UsersController', () => {
       const result = await controller.createUser(createUserDto);
 
       // Assert
-      expect(result).toEqual({
-        id: 1,
-        success: true,
-        message: 'User created successfully',
-        createdAt: expect.any(Date),
-      });
+      expect(result).toBe(successResult);
+      expect(result.isSuccess).toBe(true);
+      if (result.isSuccess) {
+        expect(result.value).toBe(1);
+      }
 
       expect(mediator.sendAsync).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -210,12 +209,12 @@ describe('UsersController', () => {
       const result = await controller.createUser(createUserDto);
 
       // Assert
-      expect(result).toEqual({
-        id: 0,
-        success: false,
-        message: 'Email already exists',
-        createdAt: expect.any(Date),
-      });
+      expect(result).toBe(failureResult);
+      expect(result.isSuccess).toBe(false);
+      if (!result.isSuccess) {
+        expect(result.error.message).toBe('Email already exists');
+        expect(result.error.code).toBe('DUPLICATE_EMAIL');
+      }
     });
 
     it('should handle optional name fields', async () => {
@@ -234,7 +233,7 @@ describe('UsersController', () => {
       const result = await controller.createUser(createUserDto);
 
       // Assert
-      expect(result.success).toBe(true);
+      expect(result.isSuccess).toBe(true);
       expect(mediator.sendAsync).toHaveBeenCalledWith(
         expect.objectContaining({
           email: 'test@example.com',
