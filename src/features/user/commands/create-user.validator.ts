@@ -22,7 +22,9 @@ export class CreateUserCommandValidator extends AbstractValidator<CreateUserComm
       .notEmpty()
       .withMessage('Email must be a non-empty string')
       .email()
-      .withMessage('Email must be a valid email address');
+      .withMessage('Email must be a valid email address')
+      .mustBe((email) => !email || email.length <= 200)
+      .withMessage('Email must not exceed 200 characters');
 
     // Password validation
     this.ruleFor((x) => x.password)
@@ -30,23 +32,29 @@ export class CreateUserCommandValidator extends AbstractValidator<CreateUserComm
       .withMessage('Password must be defined')
       .notEmpty()
       .withMessage('Password must be a non-empty string')
-      .mustBe((password) => !password || password.length >= 6)
-      .withMessage('Password must be at least 6 characters long');
+      .mustBe((password) => password.length >= 6)
+      .withMessage('Password must be at least 6 characters long')
+      .mustBe((password) => password.length <= 128)
+      .withMessage('Password must not exceed 128 characters');
 
+    // firstName validation - optional
     this.ruleFor((x) => x.firstName)
-      .mustBeDefined()
-      .withMessage('First name must be defined')
-      .notEmpty()
-      .withMessage('First name must be a non-empty string')
-      .mustBe((firstName) => !firstName || firstName.trim().length > 0)
-      .withMessage('First name must be a valid name');
+      .mustBe(
+        (firstName) =>
+          firstName === null ||
+          firstName === undefined ||
+          (typeof firstName === 'string' && firstName.trim().length > 0 && firstName.length <= 100),
+      )
+      .withMessage('First name must be null, undefined, or a valid string (max 100 characters)');
 
+    // lastName validation - optional
     this.ruleFor((x) => x.lastName)
-      .mustBeDefined()
-      .withMessage('Last name must be defined')
-      .notEmpty()
-      .withMessage('Last name must be a non-empty string')
-      .mustBe((lastName) => !lastName || lastName.trim().length > 0)
-      .withMessage('Last name must be a valid name');
+      .mustBe(
+        (lastName) =>
+          lastName === null ||
+          lastName === undefined ||
+          (typeof lastName === 'string' && lastName.trim().length > 0 && lastName.length <= 100),
+      )
+      .withMessage('Last name must be null, undefined, or a valid string (max 100 characters)');
   }
 }

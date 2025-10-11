@@ -63,4 +63,36 @@ export default tseslint.config(
       'no-console': 'off', // Allow console in NestJS apps
     },
   },
+  // Test file specific rules
+  {
+    files: ['**/*.spec.ts', '**/*.test.ts', '**/test-setup.ts'],
+    rules: {
+      // Relax TypeScript rules for test files
+      '@typescript-eslint/no-explicit-any': 'off',
+      '@typescript-eslint/no-unsafe-argument': 'off',
+      '@typescript-eslint/no-unsafe-assignment': 'off',
+      '@typescript-eslint/no-unsafe-call': 'off',
+      '@typescript-eslint/no-unsafe-member-access': 'off',
+      '@typescript-eslint/no-unsafe-return': 'off',
+      '@typescript-eslint/unbound-method': 'off',
+      '@typescript-eslint/no-unused-vars': 'off',
+
+      // Jest specific rules
+      'jest/expect-expect': 'off',
+      'jest/no-disabled-tests': 'warn',
+      'jest/no-focused-tests': 'error',
+      'jest/no-identical-title': 'error',
+      'jest/prefer-to-have-length': 'warn',
+      'jest/valid-expect': 'error',
+
+      // Allow non-null assertions in tests
+      '@typescript-eslint/no-non-null-assertion': 'off',
+
+      // Allow empty functions in mocks
+      '@typescript-eslint/no-empty-function': 'off',
+
+      // Allow magic numbers in tests
+      '@typescript-eslint/no-magic-numbers': 'off',
+    },
+  },
 );
