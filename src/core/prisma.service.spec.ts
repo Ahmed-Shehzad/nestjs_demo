@@ -10,10 +10,15 @@ describe('PrismaService', () => {
     }).compile();
 
     service = module.get<PrismaService>(PrismaService);
+
+    // Mock the database connection methods to prevent real connections in tests
+    jest.spyOn(service, '$connect').mockResolvedValue(undefined);
+    jest.spyOn(service, '$disconnect').mockResolvedValue(undefined);
   });
 
-  afterEach(async () => {
-    await service.$disconnect();
+  afterEach(() => {
+    // Clear all mocks after each test
+    jest.clearAllMocks();
   });
 
   describe('initialization', () => {
@@ -53,9 +58,14 @@ describe('PrismaService', () => {
       expect(disconnectSpy).toHaveBeenCalledTimes(1);
     });
 
-    it.skip('should handle disconnection errors gracefully', async () => {
-      // Skipping this test due to Jest configuration issue with Error objects
-      // TODO: Fix Jest setup to properly handle mock errors
+    it('should handle disconnection errors gracefully', async () => {
+      const error = new Error('Disconnection failed');
+      const loggerSpy = jest.spyOn(service['logger'], 'error').mockImplementation();
+      jest.spyOn(service, '$disconnect').mockRejectedValue(error);
+
+      await service.onModuleDestroy();
+
+      expect(loggerSpy).toHaveBeenCalledWith('Error disconnecting from database:', error);
     });
   });
 

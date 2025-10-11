@@ -3,6 +3,11 @@
 
 import 'reflect-metadata';
 
+// Set test environment variables to prevent real database connections
+process.env.NODE_ENV = 'test';
+process.env.DATABASE_URL = 'postgresql://test:test@localhost:5432/test_db';
+process.env.TEST_DATABASE_URL = 'postgresql://test:test@localhost:5432/test_db';
+
 // Global test timeout (30 seconds for integration tests)
 jest.setTimeout(30000);
 
