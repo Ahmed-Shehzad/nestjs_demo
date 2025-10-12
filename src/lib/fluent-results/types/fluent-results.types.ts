@@ -1,10 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unsafe-assignment */
-export type SuccessResult<T> = {
+type SuccessResult<T> = {
   isSuccess: true;
   value: T;
 };
 
-export type FailureResult = {
+type FailureResult = {
   isSuccess: false;
   error: {
     message: string;
@@ -15,7 +15,7 @@ export type FailureResult = {
 
 export type FluentResult<T> = SuccessResult<T> | FailureResult;
 
-export class FluentResultFactory {
+class FluentResultFactory {
   static success<T>(value: T): FluentResult<T> {
     return {
       isSuccess: true,
