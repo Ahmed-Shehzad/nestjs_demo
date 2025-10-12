@@ -1,4 +1,3 @@
-import { PrismaService } from '@/core/prisma.service';
 import { FluentResult } from '@/fluent-results/types/fluent-results.types';
 import { InjectMediator } from '@/mediator/decorators/inject-mediator.decorator';
 import { RequestHandler } from '@/mediator/decorators/request-handler.decorator';
@@ -22,7 +21,8 @@ import { CreateUserCommand } from './create-user.command';
 @RequestHandler(CreateUserCommand)
 export class CreateUserCommandHandler implements ICommandHandler<CreateUserCommand, FluentResult<number>> {
   constructor(
-    private readonly prisma: PrismaService,
+    @InjectUnitOfWork() private readonly unitOfWork: IUnitOfWork,
+    private readonly userRepository: UserRepository,
     @InjectMediator() private readonly mediator: IMediator,
     private readonly problemDetailsService: ProblemDetailsService,
   ) {}
@@ -31,12 +31,10 @@ export class CreateUserCommandHandler implements ICommandHandler<CreateUserComma
     const { email, firstName, lastName, password } = command;
 
     try {
-      // Start a transaction for data consistency
-      const result = await this.prisma.$transaction(async (tx) => {
-        // Check if user already exists
-        const existingUser = await tx.user.findUnique({
-          where: { email },
-        });
+      // Execute within Unit of Work transaction for atomic operations
+      const result = await this.unitOfWork.executeInTransactionAsync(async () => {
+        // Check if user already exists using repository
+        const existingUser = await this.userRepository.findByEmailAsync(email);
 
         if (existingUser) {
           throw this.problemDetailsService.createDuplicateEmail(email);
@@ -46,17 +44,17 @@ export class CreateUserCommandHandler implements ICommandHandler<CreateUserComma
         const saltRounds = 10;
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-        // Create the user
-        const newUser = await tx.user.create({
-          data: {
-            email,
-            firstName: firstName || null,
-            lastName: lastName || null,
-            hash: hashedPassword,
-          },
+        // Create the user using repository
+        const newUser = await this.userRepository.createAsync({
+          email,
+          firstName: firstName || null,
+          lastName: lastName || null,
+          hash: hashedPassword,
         });
+
         console.log('✅ User created successfully with ID:', newUser.id);
 
+        // Publish domain event
         await this.mediator.publishAsync(
           new UserCreatedEvent(newUser.id, newUser.email, newUser.firstName, newUser.lastName),
         );

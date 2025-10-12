@@ -1,5 +1,5 @@
-import { Module } from '@nestjs/common';
 import { MediatorModule } from '@/mediator/mediator.module';
+import { Module } from '@nestjs/common';
 
 // Query Handlers
 import { GetAllBookmarksQueryHandler } from './queries/get-all-bookmarks.handler';
@@ -8,29 +8,33 @@ import { GetBookmarksByFilterQueryHandler } from './queries/get-bookmarks-by-fil
 
 // Command Handlers
 import { CreateBookmarkCommandHandler } from './commands/create-bookmark.handler';
-import { UpdateBookmarkCommandHandler } from './commands/update-bookmark.handler';
 import { DeleteBookmarkCommandHandler } from './commands/delete-bookmark.handler';
+import { UpdateBookmarkCommandHandler } from './commands/update-bookmark.handler';
 
 // Domain Event Handlers
 import { BookmarkCreatedEventHandler } from './events/domain/bookmark-created.handler';
-import { BookmarkUpdatedEventHandler } from './events/domain/bookmark-updated.handler';
 import { BookmarkDeletedEventHandler } from './events/domain/bookmark-deleted.handler';
+import { BookmarkUpdatedEventHandler } from './events/domain/bookmark-updated.handler';
 
 // Validators
+import { CreateBookmarkCommandValidator } from './commands/create-bookmark.validator';
+import { DeleteBookmarkCommandValidator } from './commands/delete-bookmark.validator';
+import { UpdateBookmarkCommandValidator } from './commands/update-bookmark.validator';
 import { GetAllBookmarksQueryValidator } from './queries/get-all-bookmarks.validator';
 import { GetBookmarkByIdQueryValidator } from './queries/get-bookmark-by-id.validator';
 import { GetBookmarksByFilterQueryValidator } from './queries/get-bookmarks-by-filter.validator';
-import { CreateBookmarkCommandValidator } from './commands/create-bookmark.validator';
-import { UpdateBookmarkCommandValidator } from './commands/update-bookmark.validator';
-import { DeleteBookmarkCommandValidator } from './commands/delete-bookmark.validator';
 
 // Controllers
 import { BookmarksController } from './bookmark.controller';
+
+// Repositories
+import { BookmarkRepository } from './repositories/bookmark.repository';
 
 /**
  * Bookmark Feature Module
  *
  * Contains all bookmark-related functionality including:
+ * - Repository for data access operations
  * - Query handlers for retrieving bookmark data
  * - Command handlers for bookmark operations
  * - Domain event handlers for bookmark lifecycle events
@@ -41,6 +45,9 @@ import { BookmarksController } from './bookmark.controller';
   imports: [MediatorModule],
   controllers: [BookmarksController],
   providers: [
+    // Repository
+    BookmarkRepository,
+
     // Query Handlers
     GetAllBookmarksQueryHandler,
     GetBookmarkByIdQueryHandler,
@@ -65,7 +72,8 @@ import { BookmarksController } from './bookmark.controller';
     DeleteBookmarkCommandValidator,
   ],
   exports: [
-    // Export handlers so they can be used by other modules if needed
+    // Export repository and handlers so they can be used by other modules if needed
+    BookmarkRepository,
     GetAllBookmarksQueryHandler,
     GetBookmarkByIdQueryHandler,
     GetBookmarksByFilterQueryHandler,

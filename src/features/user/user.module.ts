@@ -30,10 +30,14 @@ import { UsersController } from './user.controller';
 // Services
 import { UserService } from './services/user.service';
 
+// Repositories
+import { UserRepository } from './repositories/user.repository';
+
 /**
  * User Feature Module
  *
  * Contains all user-related functionality including:
+ * - Repository for data access operations
  * - Query handlers for retrieving user data
  * - Command handlers for user operations
  * - Domain event handlers for user lifecycle events
@@ -44,6 +48,9 @@ import { UserService } from './services/user.service';
   imports: [MediatorModule],
   controllers: [UsersController],
   providers: [
+    // Repository
+    UserRepository,
+
     // Services
     UserService,
 
@@ -71,7 +78,8 @@ import { UserService } from './services/user.service';
     DeleteUserCommandValidator,
   ],
   exports: [
-    // Export service and handlers so they can be used by other modules if needed
+    // Export repository and services so they can be used by other modules if needed
+    UserRepository,
     UserService,
     GetAllUsersQueryHandler,
     GetUserByIdQueryHandler,
