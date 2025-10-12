@@ -8,6 +8,7 @@ import { ProblemDetailsService } from '@/problem-details/services/problem-detail
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserCreatedEvent } from '../events/domain/user-created.event';
+import { UserRepository } from '../repositories/user.repository';
 import { CreateUserCommand } from './create-user.command';
 
 /**
@@ -21,7 +22,6 @@ import { CreateUserCommand } from './create-user.command';
 @RequestHandler(CreateUserCommand)
 export class CreateUserCommandHandler implements ICommandHandler<CreateUserCommand, FluentResult<number>> {
   constructor(
-    @InjectUnitOfWork() private readonly unitOfWork: IUnitOfWork,
     private readonly userRepository: UserRepository,
     @InjectMediator() private readonly mediator: IMediator,
     private readonly problemDetailsService: ProblemDetailsService,
@@ -31,8 +31,7 @@ export class CreateUserCommandHandler implements ICommandHandler<CreateUserComma
     const { email, firstName, lastName, password } = command;
 
     try {
-      // Execute within Unit of Work transaction for atomic operations
-      const result = await this.unitOfWork.executeInTransactionAsync(async () => {
+      return await this.userRepository.unitOfWork.executeWithManualTransactionAsync(async () => {
         // Check if user already exists using repository
         const existingUser = await this.userRepository.findByEmailAsync(email);
 
@@ -59,11 +58,11 @@ export class CreateUserCommandHandler implements ICommandHandler<CreateUserComma
           new UserCreatedEvent(newUser.id, newUser.email, newUser.firstName, newUser.lastName),
         );
 
-        return newUser;
-      });
+        await this.userRepository.unitOfWork.commitAsync();
 
-      // CQRS principle: commands return only ID, not full data
-      return FluentResult.success(result.id);
+        // CQRS principle: commands return only ID, not full data
+        return FluentResult.success(newUser.id);
+      });
     } catch (error) {
       // Re-throw Problem Details exceptions
       if (isProblemDetailsException(error)) {

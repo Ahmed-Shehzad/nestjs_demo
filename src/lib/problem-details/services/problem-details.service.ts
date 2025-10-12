@@ -1,16 +1,19 @@
 import { ValidationFailure } from '@/fluent-validation/validation-result.validator';
 import { HttpStatus, Injectable } from '@nestjs/common';
 import {
+  DatabaseProblemDetailsBuilder,
   DomainProblemDetailsBuilder,
   SecurityProblemDetailsBuilder,
   ValidationProblemDetailsBuilder,
 } from '../builders/problem-details.builder';
 import {
+  DatabaseProblemDetailsException,
   DomainProblemDetailsException,
   ProblemDetailsExceptions,
   SecurityProblemDetailsException,
   ValidationProblemDetailsException,
 } from '../exceptions/problem-details.exceptions';
+import type { DatabaseErrors } from '../types/problem-details.types';
 
 /**
  * Problem Details Service
@@ -57,6 +60,15 @@ export class ProblemDetailsService {
     }
 
     return new DomainProblemDetailsException(builder.build());
+  }
+
+  /**
+   * Create a database problem details exception for Prisma errors
+   * Handles all Prisma error types with detailed context and user-friendly messages
+   */
+  createDatabaseProblem(error: DatabaseErrors): DatabaseProblemDetailsException {
+    const problemDetails = DatabaseProblemDetailsBuilder.fromPrismaError(error);
+    return new DatabaseProblemDetailsException(problemDetails);
   }
 
   /**

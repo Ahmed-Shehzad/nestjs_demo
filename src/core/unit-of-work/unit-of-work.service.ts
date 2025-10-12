@@ -1,4 +1,13 @@
+import { ProblemDetailsService } from '@/problem-details/services/problem-details.service';
+import type { DatabaseErrors } from '@/problem-details/types/problem-details.types';
 import { Injectable, Logger } from '@nestjs/common';
+import {
+  PrismaClientInitializationError,
+  PrismaClientKnownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientUnknownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/client';
 import { PrismaService } from '../prisma.service';
 import { IUnitOfWork } from './unit-of-work.interface';
 
@@ -24,7 +33,23 @@ export class UnitOfWork implements IUnitOfWork {
   private commitResolve: ((value?: any) => void) | null = null;
   private rollbackReject: ((reason?: any) => void) | null = null;
 
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly problemDetailsService: ProblemDetailsService,
+  ) {}
+
+  /**
+   * Helper method to check if an error is a Prisma database error
+   */
+  private isDatabaseError(error: unknown): error is DatabaseErrors {
+    return (
+      error instanceof PrismaClientKnownRequestError ||
+      error instanceof PrismaClientUnknownRequestError ||
+      error instanceof PrismaClientValidationError ||
+      error instanceof PrismaClientInitializationError ||
+      error instanceof PrismaClientRustPanicError
+    );
+  }
 
   async beginTransactionAsync(): Promise<void> {
     if (this.isTransactionActive) {
@@ -97,6 +122,14 @@ export class UnitOfWork implements IUnitOfWork {
       .catch((error: any) => {
         this.logger.debug('Transaction ended:', (error as Error)?.message || 'Rolled back');
         this.cleanup();
+
+        // Handle database errors with proper Problem Details
+        if (this.isDatabaseError(error)) {
+          throw this.problemDetailsService.createDatabaseProblem(error);
+        }
+
+        // Re-throw other errors
+        throw error;
       });
   }
 
@@ -150,6 +183,11 @@ export class UnitOfWork implements IUnitOfWork {
       this.isTransactionActive = false;
       this.transactionContext = null;
 
+      // Handle database errors with proper Problem Details
+      if (this.isDatabaseError(error)) {
+        throw this.problemDetailsService.createDatabaseProblem(error);
+      }
+
       throw error;
     }
   }
@@ -174,6 +212,12 @@ export class UnitOfWork implements IUnitOfWork {
     } catch (error) {
       // Auto-rollback on error
       await this.rollbackAsync();
+
+      // Handle database errors with proper Problem Details
+      if (this.isDatabaseError(error)) {
+        throw this.problemDetailsService.createDatabaseProblem(error);
+      }
+
       throw error;
     }
   }

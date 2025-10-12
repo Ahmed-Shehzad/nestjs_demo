@@ -28,7 +28,7 @@ export abstract class BaseRepository<TEntity, TId, TCreateInput, TUpdateInput, T
   constructor(
     protected readonly prisma: PrismaService,
     protected readonly modelName: string,
-    @InjectUnitOfWork() protected readonly unitOfWork: IUnitOfWork,
+    @InjectUnitOfWork() public readonly unitOfWork: IUnitOfWork,
   ) {}
 
   /**
@@ -128,18 +128,6 @@ export abstract class BaseRepository<TEntity, TId, TCreateInput, TUpdateInput, T
       where: filter,
     });
     return result.count;
-  }
-
-  /**
-   * Execute multiple operations within a single transaction
-   * This provides atomic transaction support at the repository level
-   * @param operation - Function containing operations to execute
-   * @returns Promise<T> - Result of the operation
-   */
-  async executeInTransactionAsync<T>(operation: () => Promise<T>): Promise<T> {
-    return await this.unitOfWork.executeInTransactionAsync(async () => {
-      return await operation();
-    });
   }
 
   /**

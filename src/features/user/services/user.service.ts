@@ -119,7 +119,7 @@ export class UserService {
         'DATABASE_ERROR',
         {
           operation: 'getUserById',
-          userId: id,
+          id,
         },
       );
     }

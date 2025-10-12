@@ -1,3 +1,12 @@
+import { HttpStatus } from '@nestjs/common';
+import {
+  PrismaClientInitializationError,
+  PrismaClientKnownRequestError,
+  PrismaClientRustPanicError,
+  PrismaClientUnknownRequestError,
+  PrismaClientValidationError,
+} from '@prisma/client/runtime/library';
+
 /**
  * Problem Details for HTTP APIs (RFC 7807)
  *
@@ -99,6 +108,13 @@ export interface DomainProblemDetails extends ProblemDetails {
   };
 }
 
+export interface DatabaseProblemDetails extends ProblemDetails {
+  status: HttpStatus;
+  type: string;
+  title: string;
+  meta?: Record<string, unknown>;
+}
+
 /**
  * Security Problem Details
  *
@@ -131,3 +147,13 @@ export interface SecurityProblemDetails extends ProblemDetails {
     expiresAt?: string;
   };
 }
+
+/**
+ * Union type for all possible database errors that can occur
+ */
+export type DatabaseErrors =
+  | PrismaClientKnownRequestError
+  | PrismaClientUnknownRequestError
+  | PrismaClientRustPanicError
+  | PrismaClientInitializationError
+  | PrismaClientValidationError;

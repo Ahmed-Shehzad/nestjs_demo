@@ -1,5 +1,6 @@
 import { HttpException, HttpStatus } from '@nestjs/common';
 import {
+  DatabaseProblemDetails,
   DomainProblemDetails,
   ProblemDetails,
   SecurityProblemDetails,
@@ -34,6 +35,19 @@ export class ProblemDetailsException extends HttpException {
    */
   getProblemDetails(): ProblemDetails {
     return this.getResponse() as ProblemDetails;
+  }
+}
+
+export class DatabaseProblemDetailsException extends ProblemDetailsException {
+  constructor(databaseDetails: DatabaseProblemDetails) {
+    super(databaseDetails);
+  }
+
+  /**
+   * Get the database problem details
+   */
+  getDatabaseDetails(): DatabaseProblemDetails {
+    return this.getResponse() as DatabaseProblemDetails;
   }
 }
 
@@ -109,6 +123,7 @@ export class ProblemDetailsExceptions {
       traceId: `${timestamp.toString(36)}-${Math.random().toString(36).substring(2, 10)}`,
     };
   }
+
   /**
    * Create a Bad Request exception with problem details
    */

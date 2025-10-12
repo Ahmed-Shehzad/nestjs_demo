@@ -1,3 +1,4 @@
+import { ProblemDetailsService } from '@/problem-details/services/problem-details.service';
 import { Global, Module } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 import { UnitOfWork } from './repositories';
@@ -19,6 +20,7 @@ export const UNIT_OF_WORK_TOKEN = Symbol('IUnitOfWork');
 @Module({
   providers: [
     PrismaService,
+    ProblemDetailsService,
     // Unit of Work pattern for atomic transactions
     {
       provide: UNIT_OF_WORK_TOKEN,
@@ -26,6 +28,6 @@ export const UNIT_OF_WORK_TOKEN = Symbol('IUnitOfWork');
     },
     UnitOfWork,
   ],
-  exports: [PrismaService, UNIT_OF_WORK_TOKEN, UnitOfWork],
+  exports: [PrismaService, ProblemDetailsService, UNIT_OF_WORK_TOKEN, UnitOfWork],
 })
 export class CoreModule {}
