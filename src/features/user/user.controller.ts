@@ -1,6 +1,6 @@
 import { MediatorDiscoveryService } from '@/mediator/discovery/mediator-discovery.service';
-import type { IMediator } from '@/mediator/types/mediator';
-import { Body, Controller, Get, HttpStatus, Inject, Post, Query, Version } from '@nestjs/common';
+import { InjectMediator, type IMediator } from '@/mediator/mediator.module';
+import { Body, Controller, Get, HttpStatus, Post, Query, Version } from '@nestjs/common';
 import { ApiBearerAuth, ApiBody, ApiOperation, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 
 import { FluentResult } from '@/fluent-results/types/fluent-results.types';
@@ -18,7 +18,7 @@ import { GetAllUsersQuery } from './queries/get-all-users.query';
 @ApiBearerAuth()
 export class UsersController {
   constructor(
-    @Inject('IMediator') private readonly mediator: IMediator,
+    @InjectMediator() private readonly mediator: IMediator,
     private readonly discovery: MediatorDiscoveryService,
   ) {}
 

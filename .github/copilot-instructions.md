@@ -26,7 +26,7 @@
 - **CQRS Structure**: Each feature (e.g., `features/user/`) contains `commands/`, `queries/`, `events/`, and `services/` folders. Handlers and validators are named after their request type (e.g., `get-all-users.handler.ts`).
 - **Handler Registration**: Use `@RequestHandler(QueryClass)` decorator and implement `IQueryHandler<TQuery, TResult>` or `ICommandHandler`.
 - **Validation**: Validators extend `AbstractValidator` with `@ValidatorFor(QueryClass)` decorator and use fluent chaining (`.mustBeDefined()`, `.mustBe()`, `.withMessage()`).
-- **Dependency Injection**: Controllers inject `@Inject('IMediator')` and call `this.mediator.sendAsync(query)`.
+- **Dependency Injection**: Controllers inject `@InjectMediator()` and call `this.mediator.sendAsync(query)`.
 - **Results Pattern**: All handlers return `FluentResult<T>` for consistent error handling and success states.
 - **Error Handling**: Use RFC 7807 Problem Details format with builders in `lib/problem-details/`.
 - **HATEOAS**: API responses include hypermedia links with pagination metadata.

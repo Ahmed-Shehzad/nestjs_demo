@@ -1,3 +1,4 @@
+import { MEDIATOR_TOKEN } from '@/mediator/mediator.module';
 import { Test, TestingModule } from '@nestjs/testing';
 import { BookmarksController } from './bookmark.controller';
 
@@ -92,7 +93,7 @@ describe('BookmarksController', () => {
       controllers: [BookmarksController],
       providers: [
         {
-          provide: 'IMediator',
+          provide: MEDIATOR_TOKEN,
           useValue: mockMediator,
         },
       ],

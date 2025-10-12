@@ -1,6 +1,7 @@
 // Jest configuration for NestJS Enterprise CQRS API
 // Test setup and global configurations
 
+import { MEDIATOR_TOKEN } from '@/mediator/mediator.module';
 import 'reflect-metadata';
 
 // Set test environment variables to prevent real database connections
@@ -175,7 +176,7 @@ export const TestHelpers = {
           useValue: TestHelpers.createMockPrismaClient(),
         },
         {
-          provide: 'IMediator',
+          provide: MEDIATOR_TOKEN,
           useValue: TestHelpers.createMockMediator(),
         },
       ],

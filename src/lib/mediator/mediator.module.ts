@@ -1,12 +1,22 @@
-import { Module } from '@nestjs/common';
-import { DiscoveryModule } from '@golevelup/nestjs-discovery';
 import { FluentValidationModule } from '@/fluent-validation/fluent-validation.module';
-import { MediatorDiscoveryService } from './discovery/mediator-discovery.service';
-import { NotificationPublisher } from './services/notification-publisher.service';
-import { MediatorService } from './services/mediator.service';
+import { DiscoveryModule } from '@golevelup/nestjs-discovery';
+import { Module } from '@nestjs/common';
 import { LoggingBehavior } from './behaviors/logging.behavior';
 import { TelemetryBehavior } from './behaviors/telemetry.behavior';
 import { ValidationBehavior } from './behaviors/validation.behavior';
+import { MediatorDiscoveryService } from './discovery/mediator-discovery.service';
+import { MediatorService } from './services/mediator.service';
+import { NotificationPublisher } from './services/notification-publisher.service';
+
+/**
+ * Injection token for the IMediator interface.
+ * This provides type safety and proper dependency injection.
+ */
+export const MEDIATOR_TOKEN = Symbol('IMediator');
+
+// Re-export the injection decorator and types for convenience
+export { InjectMediator } from './decorators/inject-mediator.decorator';
+export type { IMediator } from './types/mediator';
 
 /**
  * Mediator Module
@@ -25,7 +35,7 @@ import { ValidationBehavior } from './behaviors/validation.behavior';
     NotificationPublisher,
     MediatorService,
     {
-      provide: 'IMediator',
+      provide: MEDIATOR_TOKEN,
       useClass: MediatorService,
     },
     LoggingBehavior,
@@ -35,10 +45,7 @@ import { ValidationBehavior } from './behaviors/validation.behavior';
   exports: [
     MediatorDiscoveryService,
     NotificationPublisher,
-    {
-      provide: 'IMediator',
-      useClass: MediatorService,
-    },
+    MEDIATOR_TOKEN,
     LoggingBehavior,
     TelemetryBehavior,
     ValidationBehavior,

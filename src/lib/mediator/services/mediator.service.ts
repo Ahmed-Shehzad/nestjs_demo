@@ -33,7 +33,7 @@ import { IRequest } from '../types/request';
  * ```typescript
  * @Controller('users')
  * export class UsersController {
- *   constructor(@Inject('IMediator') private readonly mediator: IMediator) {}
+ *   constructor(@InjectMediator() private readonly mediator: IMediator) {}
  *
  *   @Get(':id')
  *   async getUser(@Param('id') id: string): Promise<UserDto> {

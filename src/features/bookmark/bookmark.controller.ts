@@ -1,5 +1,5 @@
-import type { IMediator } from '@/mediator/types/mediator';
-import { Controller, Get, HttpStatus, Inject, Param, Query, Version } from '@nestjs/common';
+import { InjectMediator, type IMediator } from '@/mediator/mediator.module';
+import { Controller, Get, HttpStatus, Param, Query, Version } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiQuery, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { GetAllBookmarksDto } from './queries/get-all-bookmarks.dto';
 import { GetAllBookmarksQuery } from './queries/get-all-bookmarks.query';
@@ -14,7 +14,7 @@ import { GetBookmarkByIdQuery } from './queries/get-bookmark-by-id.query';
 @Controller('bookmarks')
 @ApiBearerAuth()
 export class BookmarksController {
-  constructor(@Inject('IMediator') private readonly mediator: IMediator) {}
+  constructor(@InjectMediator() private readonly mediator: IMediator) {}
 
   /**
    * Get all bookmarks with pagination and HATEOAS links

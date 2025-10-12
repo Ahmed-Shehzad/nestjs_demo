@@ -1,11 +1,12 @@
 import { PrismaService } from '@/core/prisma.service';
 import { FluentResult } from '@/fluent-results/types/fluent-results.types';
+import { InjectMediator } from '@/mediator/decorators/inject-mediator.decorator';
 import { RequestHandler } from '@/mediator/decorators/request-handler.decorator';
 import type { IMediator } from '@/mediator/types/mediator';
 import { ICommandHandler } from '@/mediator/types/request';
 import { isProblemDetailsException } from '@/problem-details/exceptions/problem-details.exceptions';
 import { ProblemDetailsService } from '@/problem-details/services/problem-details.service';
-import { Inject, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserCreatedEvent } from '../events/domain/user-created.event';
 import { CreateUserCommand } from './create-user.command';
@@ -22,7 +23,7 @@ import { CreateUserCommand } from './create-user.command';
 export class CreateUserCommandHandler implements ICommandHandler<CreateUserCommand, FluentResult<number>> {
   constructor(
     private readonly prisma: PrismaService,
-    @Inject('IMediator') private readonly mediator: IMediator,
+    @InjectMediator() private readonly mediator: IMediator,
     private readonly problemDetailsService: ProblemDetailsService,
   ) {}
 

@@ -1,6 +1,6 @@
 import { FluentResult } from '@/fluent-results/types/fluent-results.types';
 import { MediatorDiscoveryService } from '@/mediator/discovery/mediator-discovery.service';
-import { IMediator } from '@/mediator/types/mediator';
+import { MEDIATOR_TOKEN, type IMediator } from '@/mediator/mediator.module';
 import { Test, TestingModule } from '@nestjs/testing';
 import { CreateUserRequest } from './commands/create-user.dto';
 import { GetAllUsersDto } from './queries/get-all-users.dto';
@@ -25,13 +25,13 @@ describe('UsersController', () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [UsersController],
       providers: [
-        { provide: 'IMediator', useValue: mediatorMock },
+        { provide: MEDIATOR_TOKEN, useValue: mediatorMock },
         { provide: MediatorDiscoveryService, useValue: discoveryMock },
       ],
     }).compile();
 
     controller = module.get<UsersController>(UsersController);
-    mediator = module.get('IMediator');
+    mediator = module.get(MEDIATOR_TOKEN);
     discoveryService = module.get(MediatorDiscoveryService);
   });
 
