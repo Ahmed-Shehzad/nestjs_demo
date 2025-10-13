@@ -151,6 +151,7 @@
       "^@/problem-details/(.*)$": "<rootDir>/lib/problem-details/$1",
       "^@/features/(.*)$": "<rootDir>/features/$1",
       "^@/core/(.*)$": "<rootDir>/core/$1",
+      "^@core/(.*)$": "<rootDir>/core/$1",
       "^@/config/(.*)$": "<rootDir>/config/$1",
       "^@/(.*)$": "<rootDir>/$1"
     },

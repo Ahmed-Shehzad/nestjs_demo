@@ -1,7 +1,6 @@
 import { ProblemDetailsExceptionFilter } from '@/problem-details/filters/problem-details-exception.filter';
 import { ValidationPipe, VersioningType } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
-import type { NextFunction, Request, Response } from 'express';
 import { AppModule } from './app.module';
 
 /**
@@ -42,29 +41,6 @@ async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const envConfig = getEnvironmentConfig();
 
-  // Add a simple root route to handle / requests
-  app.use('/', (req: Request, res: Response, next: NextFunction) => {
-    if (req.url === '/') {
-      const baseUrl = `${req.protocol}://${req.get('host')}`;
-      res.json({
-        message: 'Welcome to NestJS WebAPI',
-        description: 'A comprehensive NestJS API with Clean Architecture, CQRS, and DDD patterns',
-        version: '2.0.0',
-        documentation: {
-          'API v2 (Latest)': `${baseUrl}/api/v2/docs`,
-          'API v1 (Legacy)': `${baseUrl}/api/v1/docs`,
-        },
-        endpoints: {
-          Users: `${baseUrl}/api/v2/users`,
-          Bookmarks: `${baseUrl}/api/v2/bookmarks`,
-        },
-        timestamp: new Date().toISOString(),
-      });
-    } else {
-      next();
-    }
-  });
-
   // Configure application
   app.setGlobalPrefix('api');
   app.enableVersioning({
@@ -80,20 +56,25 @@ async function bootstrap() {
       // Use standard NestJS SwaggerModule for automatic controller discovery
       const { DocumentBuilder, SwaggerModule } = await import('@nestjs/swagger');
 
-      // Create unified Swagger documentation (simpler approach)
+      // Create unified document with server selector for version switching
       const config = new DocumentBuilder()
         .setTitle('NestJS WebAPI')
         .setDescription('A comprehensive NestJS API with Clean Architecture, CQRS, and DDD patterns')
         .setVersion('2.0.0')
-        .addServer(envConfig.baseUrl, 'API Server')
+        // Add servers for version selection dropdown in Swagger UI
+        .addServer(envConfig.baseUrl + '/api/v2', 'API Version 2 (Latest)')
+        .addServer(envConfig.baseUrl + '/api/v1', 'API Version 1 (Legacy)')
         .addTag('Users', 'User management operations')
         .addTag('Bookmarks', 'Bookmark management operations')
         .build();
 
-      const document = SwaggerModule.createDocument(app, config);
+      // Generate unified document with all endpoints
+      const document = SwaggerModule.createDocument(app, config, {
+        include: [], // Include all modules
+      });
 
-      // Setup V2 Swagger UI
-      SwaggerModule.setup('api/v2/docs', app, document, {
+      // Setup unified Swagger UI with server dropdown for version selection
+      SwaggerModule.setup('api/docs', app, document, {
         explorer: true,
         swaggerOptions: {
           persistAuthorization: true,
@@ -175,18 +156,20 @@ async function bootstrap() {
           }
         `,
         customJs: `
-          console.log('🚀 SIMPLE Swagger Filter Loading...');
+          console.log('� Simple Swagger Version Filter Loading...');
 
-          // Function to filter endpoints by path version
+          // Simple function to filter endpoints by URL path
           function filterEndpointsByVersion(version) {
             console.log('Filtering for version:', version);
             const operations = document.querySelectorAll('.opblock');
+
 
             operations.forEach(function(operation) {
               const pathElement = operation.querySelector('.opblock-summary-path');
               if (pathElement) {
                 const path = pathElement.textContent || pathElement.innerText;
 
+                // Show/hide based on path version
                 if (version === 'v1' && path.includes('/v1/')) {
                   operation.style.display = 'block';
                 } else if (version === 'v2' && path.includes('/v2/')) {
@@ -198,61 +181,9 @@ async function bootstrap() {
                 }
               }
             });
-            console.log('✅ Filtered for version:', version);
+
+            console.log('✅ Filtered endpoints for version:', version);
           }
-
-          // Setup server dropdown listener
-          function setupDropdownListener() {
-            const serverSelect = document.querySelector('.servers select');
-
-            if (serverSelect) {
-              console.log('✅ Found server dropdown');
-
-              serverSelect.addEventListener('change', function(e) {
-                const selectedUrl = e.target.value;
-                console.log('Server changed to:', selectedUrl);
-
-                if (selectedUrl.includes('/v1')) {
-                  filterEndpointsByVersion('v1');
-                } else if (selectedUrl.includes('/v2')) {
-                  filterEndpointsByVersion('v2');
-                }
-              });
-
-              // Set initial filter
-              const currentUrl = serverSelect.value;
-              if (currentUrl.includes('/v2')) {
-                filterEndpointsByVersion('v2');
-              } else if (currentUrl.includes('/v1')) {
-                filterEndpointsByVersion('v1');
-              }
-
-              return true;
-            }
-            return false;
-          }
-
-          // Initialize
-          let attempts = 0;
-          function init() {
-            attempts++;
-            if (setupDropdownListener()) {
-              console.log('🎉 Filter initialized!');
-            } else if (attempts < 15) {
-              setTimeout(init, 400);
-            } else {
-              console.log('❌ Failed to initialize');
-            }
-          }
-
-          // Start
-          if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', init);
-          } else {
-            init();
-          }
-
-          window.filterEndpointsByVersion = filterEndpointsByVersion;
 
           // Wait for Swagger to load and attach listener to server dropdown
           function attachServerDropdownListener() {
@@ -526,33 +457,10 @@ async function bootstrap() {
         customfavIcon: '/favicon.ico',
       });
 
-      // Setup V1 Swagger UI
-      SwaggerModule.setup('api/v1/docs', app, document, {
-        explorer: true,
-        swaggerOptions: {
-          persistAuthorization: true,
-          displayRequestDuration: true,
-          defaultModelsExpandDepth: 1,
-          defaultModelExpandDepth: 1,
-          docExpansion: 'list',
-          tryItOutEnabled: true,
-          filter: true,
-        },
-        customSiteTitle: 'NestJS WebAPI v1 Documentation',
-        customCss: `
-          .swagger-ui .info .title::after {
-            content: " (Legacy)";
-            color: #f59e0b;
-            font-size: 0.8em;
-            font-weight: normal;
-          }
-        `,
-        customfavIcon: '/favicon.ico',
-      });
-
-      console.log(`📖 Swagger UI v2 available at: ${envConfig.baseUrl}/api/v2/docs`);
-      console.log(`📖 Swagger UI v1 available at: ${envConfig.baseUrl}/api/v1/docs`);
-      console.log(`🚀 Separate documentation for each API version`);
+      console.log(`📖 Swagger UI available at: ${envConfig.baseUrl}/api/docs`);
+      console.log(`🔄 Use the server dropdown to switch between API versions`);
+      console.log(`� API v2 (Latest): Select "${envConfig.baseUrl}/api/v2" in server dropdown`);
+      console.log(`� API v1 (Legacy): Select "${envConfig.baseUrl}/api/v1" in server dropdown`);
     } catch (error) {
       console.warn('⚠️  OpenAPI setup failed:', error);
     }

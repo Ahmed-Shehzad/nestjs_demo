@@ -1,8 +1,5 @@
-import { InjectUnitOfWork } from '@/core/decorators/inject-unit-of-work.decorator';
 import { PrismaService } from '@/core/prisma.service';
 import { IBaseRepository } from '@/core/repositories';
-import { BaseRepository } from '@/core/repositories/base-repository';
-import type { IUnitOfWork } from '@/core/unit-of-work/unit-of-work.interface';
 import { Injectable } from '@nestjs/common';
 import { Prisma, User } from '@prisma/client';
 
@@ -25,71 +22,66 @@ export interface IUserRepository
  * transactions through the Unit of Work pattern
  */
 @Injectable()
-export class UserRepository
-  extends BaseRepository<User, number, Prisma.UserCreateInput, Prisma.UserUpdateInput, Prisma.UserWhereInput>
-  implements IUserRepository
-{
-  constructor(prisma: PrismaService, @InjectUnitOfWork() unitOfWork: IUnitOfWork) {
-    super(prisma, 'user', unitOfWork);
+export class UserRepository implements IUserRepository {
+  constructor(private readonly prisma: PrismaService) {}
+
+  async findByIdAsync(id: number): Promise<User | null> {
+    return this.prisma.user.findUnique({ where: { id } });
   }
 
-  /**
-   * Find user by email address
-   * @param email - User email address
-   * @returns Promise<User | null>
-   */
+  async findManyAsync(filter: Prisma.UserWhereInput): Promise<User[]> {
+    return this.prisma.user.findMany({ where: filter });
+  }
+
+  async findFirstAsync(filter: Prisma.UserWhereInput): Promise<User | null> {
+    return this.prisma.user.findFirst({ where: filter });
+  }
+
+  async createAsync(input: Prisma.UserCreateInput): Promise<User> {
+    return this.prisma.user.create({ data: input });
+  }
+
+  async updateAsync(id: number, input: Prisma.UserUpdateInput): Promise<User> {
+    return this.prisma.user.update({ where: { id }, data: input });
+  }
+
+  async deleteAsync(id: number): Promise<User> {
+    return this.prisma.user.delete({ where: { id } });
+  }
+
+  async countAsync(filter: Prisma.UserWhereInput): Promise<number> {
+    return this.prisma.user.count({ where: filter });
+  }
+
   async findByEmailAsync(email: string): Promise<User | null> {
-    return await this.prisma.user.findUnique({
-      where: { email },
-    });
+    return this.prisma.user.findUnique({ where: { email } });
   }
 
-  /**
-   * Find users with their bookmarks included
-   * @param skip - Number of records to skip
-   * @param take - Number of records to take
-   * @returns Promise<User[]>
-   */
-  async findUsersWithBookmarksAsync(skip?: number, take?: number): Promise<User[]> {
-    const queryOptions: Prisma.UserFindManyArgs = {
-      include: {
-        bookmarks: true,
-      },
-    };
-
-    if (skip !== undefined) {
-      queryOptions.skip = skip;
-    }
-
-    if (take !== undefined) {
-      queryOptions.take = take;
-    }
-
-    return await this.prisma.user.findMany(queryOptions);
+  async findUsersWithBookmarksAsync(skip = 0, take = 10): Promise<User[]> {
+    return this.prisma.user.findMany({ skip, take, include: { bookmarks: true } });
   }
 
-  /**
-   * Get the count of bookmarks for a specific user
-   * @param userId - User identifier
-   * @returns Promise<number>
-   */
+  async existsAsync(id: number): Promise<boolean> {
+    const user = await this.prisma.user.findUnique({ where: { id } });
+    return user !== null;
+  }
+
+  async createManyAsync(data: Prisma.UserCreateInput[]): Promise<number> {
+    const result = await this.prisma.user.createMany({ data });
+    return result.count;
+  }
+
+  async updateManyAsync(filter: Prisma.UserWhereInput, input: Prisma.UserUpdateInput): Promise<number> {
+    const result = await this.prisma.user.updateMany({ where: filter, data: input });
+    return result.count;
+  }
+
+  async deleteManyAsync(filter: Prisma.UserWhereInput): Promise<number> {
+    const result = await this.prisma.user.deleteMany({ where: filter });
+    return result.count;
+  }
+
   async getUserBookmarkCountAsync(userId: number): Promise<number> {
-    return await this.prisma.bookmark.count({
-      where: { userId },
-    });
-  }
-
-  /**
-   * Override the base findByIdAsync to include bookmarks by default
-   * @param id - User identifier
-   * @returns Promise<User | null>
-   */
-  async findByIdWithBookmarksAsync(id: number): Promise<User | null> {
-    return await this.prisma.user.findUnique({
-      where: { id },
-      include: {
-        bookmarks: true,
-      },
-    });
+    return this.prisma.bookmark.count({ where: { userId } });
   }
 }

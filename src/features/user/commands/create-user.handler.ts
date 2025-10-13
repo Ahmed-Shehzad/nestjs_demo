@@ -5,6 +5,8 @@ import type { IMediator } from '@/mediator/types/mediator';
 import { ICommandHandler } from '@/mediator/types/request';
 import { isProblemDetailsException } from '@/problem-details/exceptions/problem-details.exceptions';
 import { ProblemDetailsService } from '@/problem-details/services/problem-details.service';
+import { InjectUnitOfWork } from '@core/decorators/inject-unit-of-work.decorator';
+import type { IUnitOfWork } from '@core/unit-of-work/unit-of-work.interface';
 import { Injectable } from '@nestjs/common';
 import * as bcrypt from 'bcrypt';
 import { UserCreatedEvent } from '../events/domain/user-created.event';
@@ -25,13 +27,14 @@ export class CreateUserCommandHandler implements ICommandHandler<CreateUserComma
     private readonly userRepository: UserRepository,
     @InjectMediator() private readonly mediator: IMediator,
     private readonly problemDetailsService: ProblemDetailsService,
+    @InjectUnitOfWork() private readonly unitOfWork: IUnitOfWork,
   ) {}
 
   async handleAsync(command: CreateUserCommand): Promise<FluentResult<number>> {
     const { email, firstName, lastName, password } = command;
 
     try {
-      return await this.userRepository.unitOfWork.executeWithManualTransactionAsync(async () => {
+      return await this.unitOfWork.executeWithManualTransactionAsync(async () => {
         // Check if user already exists using repository
         const existingUser = await this.userRepository.findByEmailAsync(email);
 
@@ -58,7 +61,7 @@ export class CreateUserCommandHandler implements ICommandHandler<CreateUserComma
           new UserCreatedEvent(newUser.id, newUser.email, newUser.firstName, newUser.lastName),
         );
 
-        await this.userRepository.unitOfWork.commitAsync();
+        await this.unitOfWork.commitAsync();
 
         // CQRS principle: commands return only ID, not full data
         return FluentResult.success(newUser.id);

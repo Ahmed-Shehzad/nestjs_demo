@@ -202,13 +202,57 @@ describe('GetAllUsersQueryHandler', () => {
       }
     });
 
-    it('should handle database errors gracefully', async () => {
+    it('should handle database connection errors gracefully', async () => {
       // Arrange
       const query = new GetAllUsersQuery(1, 10, '/api/users');
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
 
       prisma.user.findMany.mockRejectedValue(new Error('Database connection failed'));
       prisma.user.count.mockRejectedValue(new Error('Database connection failed'));
+
+      // Act
+      const result = await handler.handleAsync(query);
+
+      // Assert
+      expect(result.isSuccess).toBe(false);
+      if (!result.isSuccess) {
+        expect(result.error.message).toBe('Database connection failed.');
+        expect(result.error.code).toBe('DATABASE_CONNECTION_FAILED');
+      }
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching users:', expect.any(Error));
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should handle database not initialized errors gracefully', async () => {
+      // Arrange
+      const query = new GetAllUsersQuery(1, 10, '/api/users');
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      prisma.user.findMany.mockRejectedValue(new Error('Table users does not exist'));
+      prisma.user.count.mockRejectedValue(new Error('Table users does not exist'));
+
+      // Act
+      const result = await handler.handleAsync(query);
+
+      // Assert
+      expect(result.isSuccess).toBe(false);
+      if (!result.isSuccess) {
+        expect(result.error.message).toBe('Database is not properly initialized.');
+        expect(result.error.code).toBe('DATABASE_NOT_INITIALIZED');
+      }
+      expect(consoleErrorSpy).toHaveBeenCalledWith('Error fetching users:', expect.any(Error));
+
+      consoleErrorSpy.mockRestore();
+    });
+
+    it('should handle generic database errors gracefully', async () => {
+      // Arrange
+      const query = new GetAllUsersQuery(1, 10, '/api/users');
+      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation();
+
+      prisma.user.findMany.mockRejectedValue(new Error('Unexpected database error'));
+      prisma.user.count.mockRejectedValue(new Error('Unexpected database error'));
 
       // Act
       const result = await handler.handleAsync(query);

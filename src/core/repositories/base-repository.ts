@@ -2,7 +2,6 @@
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-return */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
-import { Injectable } from '@nestjs/common';
 import { InjectUnitOfWork } from '../decorators/inject-unit-of-work.decorator';
 import { PrismaService } from '../prisma.service';
 import type { IUnitOfWork } from '../unit-of-work/unit-of-work.interface';
@@ -21,7 +20,6 @@ import { IBaseRepository } from './base-repository.interface';
  * @template TUpdateInput - Input type for updating entities
  * @template TFilterInput - Input type for filtering entities
  */
-@Injectable()
 export abstract class BaseRepository<TEntity, TId, TCreateInput, TUpdateInput, TFilterInput = Record<string, any>>
   implements IBaseRepository<TEntity, TId, TCreateInput, TUpdateInput, TFilterInput>
 {

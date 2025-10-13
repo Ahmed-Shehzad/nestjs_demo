@@ -71,12 +71,28 @@ export class GetAllUsersQueryHandler implements IQueryHandler<GetAllUsersQuery, 
 
       return FluentResult.success(new GetAllUsersDto(transformedUsers, totalCount, currentPage, itemsPerPage, baseUrl));
     } catch (error) {
-      // Log the error for debugging (you might want to use a proper logger)
+      // Log the full error for debugging (server-side only)
       console.error('Error fetching users:', error);
 
-      // Return empty result with proper structure on error
-      return FluentResult.failure<GetAllUsersDto>('An error occurred while fetching users.', 'USER_FETCH_FAILED', {
-        originalError: error instanceof Error ? error.message : String(error),
+      // Return a safe error message without exposing internal details
+      let userFriendlyMessage = 'An error occurred while fetching users.';
+      let errorCode = 'USER_FETCH_FAILED';
+
+      // Handle specific Prisma errors with user-friendly messages
+      if (error instanceof Error) {
+        if (error.message.includes('does not exist')) {
+          userFriendlyMessage = 'Database is not properly initialized.';
+          errorCode = 'DATABASE_NOT_INITIALIZED';
+        } else if (error.message.includes('connection')) {
+          userFriendlyMessage = 'Database connection failed.';
+          errorCode = 'DATABASE_CONNECTION_FAILED';
+        }
+      }
+
+      return FluentResult.failure<GetAllUsersDto>(userFriendlyMessage, errorCode, {
+        // Only include safe, user-friendly error details
+        timestamp: new Date().toISOString(),
+        operation: 'fetch_users',
       });
     }
   }

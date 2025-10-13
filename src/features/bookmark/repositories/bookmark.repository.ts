@@ -1,8 +1,4 @@
-import { InjectUnitOfWork } from '@/core/decorators/inject-unit-of-work.decorator';
 import { PrismaService } from '@/core/prisma.service';
-import { IBaseRepository } from '@/core/repositories';
-import { BaseRepository } from '@/core/repositories/base-repository';
-import type { IUnitOfWork } from '@/core/unit-of-work/unit-of-work.interface';
 import { Injectable } from '@nestjs/common';
 import { Bookmark, Prisma } from '@prisma/client';
 
@@ -11,14 +7,7 @@ import { Bookmark, Prisma } from '@prisma/client';
  *
  * Defines specific operations for Bookmark entity beyond the base CRUD operations
  */
-export interface IBookmarkRepository
-  extends IBaseRepository<
-    Bookmark,
-    number,
-    Prisma.BookmarkCreateInput,
-    Prisma.BookmarkUpdateInput,
-    Prisma.BookmarkWhereInput
-  > {
+export interface IBookmarkRepository {
   findByUserIdAsync(userId: number, skip?: number, take?: number): Promise<Bookmark[]>;
   findBookmarksWithUserAsync(skip?: number, take?: number): Promise<Bookmark[]>;
   countByUserIdAsync(userId: number): Promise<number>;
@@ -32,19 +21,9 @@ export interface IBookmarkRepository
  * transactions through the Unit of Work pattern
  */
 @Injectable()
-export class BookmarkRepository
-  extends BaseRepository<
-    Bookmark,
-    number,
-    Prisma.BookmarkCreateInput,
-    Prisma.BookmarkUpdateInput,
-    Prisma.BookmarkWhereInput
-  >
-  implements IBookmarkRepository
-{
-  constructor(prisma: PrismaService, @InjectUnitOfWork() unitOfWork: IUnitOfWork) {
-    super(prisma, 'bookmark', unitOfWork);
-  }
+@Injectable()
+export class BookmarkRepository implements IBookmarkRepository {
+  constructor(private readonly prisma: PrismaService) {}
 
   /**
    * Find bookmarks by user ID
