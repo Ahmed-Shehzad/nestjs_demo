@@ -76,7 +76,7 @@ export class GetAllUsersQueryHandler implements IQueryHandler<GetAllUsersQuery, 
 
       // Return empty result with proper structure on error
       return FluentResult.failure<GetAllUsersDto>('An error occurred while fetching users.', 'USER_FETCH_FAILED', {
-        ...error,
+        originalError: error instanceof Error ? error.message : String(error),
       });
     }
   }

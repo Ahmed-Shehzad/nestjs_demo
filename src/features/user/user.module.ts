@@ -1,5 +1,6 @@
 import { MediatorModule } from '@/mediator/mediator.module';
 import { Module } from '@nestjs/common';
+import { OpenApiFeature, OpenApiModule } from '../../lib/openapi';
 
 // Query Handlers
 import { GetAllUsersQueryHandler } from './queries/get-all-users.handler';
@@ -44,8 +45,23 @@ import { UserRepository } from './repositories/user.repository';
  * - Validators for input validation
  * - Controllers for HTTP endpoints
  */
+@OpenApiFeature({
+  name: 'Users',
+  description: 'User management endpoints and operations',
+  version: '1.0.0',
+  tags: ['Users', 'Authentication'],
+})
 @Module({
-  imports: [MediatorModule],
+  imports: [
+    MediatorModule,
+    OpenApiModule.register({
+      config: {
+        title: 'User Management API',
+        description: 'User management operations',
+        version: '1.0.0',
+      },
+    }),
+  ],
   controllers: [UsersController],
   providers: [
     // Repository

@@ -145,10 +145,6 @@ export class ProblemDetailsBuilder {
 export class DatabaseProblemDetailsBuilder extends ProblemDetailsBuilder {
   private meta: Record<string, unknown> | undefined;
 
-  constructor(httpStatus: HttpStatus, title: string) {
-    super(httpStatus, title);
-  }
-
   /**
    * Create a new database problem details builder from a Prisma error
    */
@@ -508,7 +504,7 @@ export class DatabaseProblemDetailsBuilder extends ProblemDetailsBuilder {
  * Specialized builder for validation error responses.
  */
 export class ValidationProblemDetailsBuilder extends ProblemDetailsBuilder {
-  private violations: Array<{
+  private readonly violations: Array<{
     field: string;
     message: string;
     rejectedValue?: any;

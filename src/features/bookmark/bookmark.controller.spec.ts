@@ -311,23 +311,18 @@ describe('BookmarksController', () => {
     it('should handle non-numeric ID parameter', async () => {
       // Arrange
       const invalidId = faker.lorem.word();
-      const expectedResponse = {
-        data: null,
-        error: 'Invalid bookmark ID',
-      };
-
-      mockMediator.sendAsync.mockResolvedValue(expectedResponse);
 
       // Act
       const result = await controller.getBookmarkById(invalidId);
 
       // Assert
-      expect(result).toEqual(expectedResponse);
-      expect(mockMediator.sendAsync).toHaveBeenCalledWith(
-        expect.objectContaining({
-          id: NaN, // parseInt of invalid string returns NaN
-        }),
-      );
+      expect(result).toEqual({
+        status: 400,
+        message: 'Invalid bookmark ID',
+        data: null,
+        timestamp: expect.any(String),
+      });
+      expect(mockMediator.sendAsync).not.toHaveBeenCalled();
     });
 
     it('should handle mediator errors for bookmark retrieval', async () => {

@@ -82,20 +82,12 @@ export class MediatorService implements IMediator {
   async sendAsync<TResponse>(request: IRequest<TResponse>): Promise<TResponse> {
     const requestTypeName = request.constructor.name;
 
-    // 🔍 DEBUG: Mediator entry point - set breakpoint here to test pipeline debugging
-    console.log('🔍 [DEBUG] MediatorService.sendAsync called for:', requestTypeName);
-
     // Find the handler first
     // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
     const handler = this.discovery.getHandler(requestTypeName);
     if (!handler) {
-      // 🔍 DEBUG: Handler not found - set breakpoint here to debug handler registration issues
-      console.log('🔍 [DEBUG] No handler found for request type:', requestTypeName);
       throw new NotFoundException(`No handler found for request type: ${requestTypeName}`);
     }
-
-    // 🔍 DEBUG: Handler found - set breakpoint here to verify handler discovery
-    console.log('🔍 [DEBUG] Handler found for:', requestTypeName, 'Handler type:', typeof handler);
 
     // Create pipeline chain: logging -> validation -> telemetry -> handler
     const pipeline = this.buildPipeline(request, handler);
@@ -145,28 +137,18 @@ export class MediatorService implements IMediator {
   async publishAsync(notification: INotification): Promise<void> {
     const notificationTypeName = notification.constructor.name;
 
-    // 🔍 DEBUG: Notification publishing entry point
-    console.log('🔍 [DEBUG] MediatorService.publishAsync called for:', notificationTypeName);
-
     // Find all handlers for this notification type
     const handlers = this.discovery.getNotificationHandlers(notificationTypeName);
 
     if (handlers.length === 0) {
-      // 🔍 DEBUG: No handlers found - set breakpoint here to debug handler registration
-      console.log('🔍 [DEBUG] No notification handlers found for:', notificationTypeName);
       console.warn(`No notification handlers registered for: ${notificationTypeName}`);
       return;
     }
 
-    // 🔍 DEBUG: Handlers found - set breakpoint here to verify handler discovery
-    console.log('🔍 [DEBUG] Found', handlers.length, 'notification handlers for:', notificationTypeName);
-
     // Execute all handlers concurrently
     const handlePromises = handlers.map(async (handler, index) => {
       try {
-        console.log('🔍 [DEBUG] Executing notification handler', index + 1, 'of', handlers.length);
         await handler.handleAsync(notification);
-        console.log('🔍 [DEBUG] Successfully completed notification handler', index + 1);
       } catch (error) {
         console.error(`Error in notification handler ${index + 1} for ${notificationTypeName}:`, error);
         // Don't rethrow - we want other handlers to continue executing
@@ -174,6 +156,5 @@ export class MediatorService implements IMediator {
     });
 
     await Promise.all(handlePromises);
-    console.log('🔍 [DEBUG] All notification handlers completed for:', notificationTypeName);
   }
 }

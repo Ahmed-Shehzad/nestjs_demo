@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
-    "module": "nodenext",
-    "moduleResolution": "nodenext",
+    "module": "NodeNext",
+    "moduleResolution": "NodeNext",
     "resolvePackageJsonExports": true,
     "esModuleInterop": true,
     "isolatedModules": true,
@@ -10,7 +10,7 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "allowSyntheticDefaultImports": true,
-    "target": "ES2023",
+    "target": "ESNext",
     "sourceMap": true,
     "outDir": "./dist",
     "incremental": true,
@@ -19,6 +19,7 @@
     "forceConsistentCasingInFileNames": true,
     "noImplicitAny": false,
     "strictBindCallApply": false,
+    "strict": true,
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@/*": ["./src/*"],
@@ -28,6 +29,7 @@
       "@/fluent-results/*": ["./src/lib/fluent-results/*"],
       "@/hateoas/*": ["./src/lib/hateoas/*"],
       "@/problem-details/*": ["./src/lib/problem-details/*"],
+      "@/openapi/*": ["./src/lib/openapi/*"],
       "@/features/*": ["./src/features/*"],
       "@/config/*": ["./src/config/*"]
     }

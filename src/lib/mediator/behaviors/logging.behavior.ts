@@ -17,10 +17,11 @@ export class LoggingBehavior implements IPipelineBehavior<any, any> {
       console.log(`[Logging] Completed execution of: ${name} in ${duration}ms`);
       this.logger.log(`${name} executed in ${duration}ms`);
       return res;
-    } catch (e) {
-      console.log(`[Logging] Failed execution of: ${name} - ${e.message}`);
-      this.logger.error(`${name} failed: ${e.message}`);
-      throw e;
+    } catch (e: unknown) {
+      const error = e instanceof Error ? e : new Error(String(e));
+      console.log(`[Logging] Failed execution of: ${name} - ${error.message}`);
+      this.logger.error(`${name} failed: ${error.message}`);
+      throw error;
     }
   }
 }

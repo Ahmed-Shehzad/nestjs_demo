@@ -1,5 +1,6 @@
 import { MediatorModule } from '@/mediator/mediator.module';
 import { Module } from '@nestjs/common';
+import { OpenApiFeature, OpenApiModule } from '../../lib/openapi';
 
 // Query Handlers
 import { GetAllBookmarksQueryHandler } from './queries/get-all-bookmarks.handler';
@@ -41,8 +42,23 @@ import { BookmarkRepository } from './repositories/bookmark.repository';
  * - Validators for input validation
  * - Controllers for HTTP endpoints
  */
+@OpenApiFeature({
+  name: 'Bookmarks',
+  description: 'Bookmark management endpoints and operations',
+  version: '1.0.0',
+  tags: ['Bookmarks', 'Collections'],
+})
 @Module({
-  imports: [MediatorModule],
+  imports: [
+    MediatorModule,
+    OpenApiModule.register({
+      config: {
+        title: 'Bookmark Management API',
+        description: 'Bookmark management operations',
+        version: '1.0.0',
+      },
+    }),
+  ],
   controllers: [BookmarksController],
   providers: [
     // Repository

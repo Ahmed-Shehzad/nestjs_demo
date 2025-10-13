@@ -4,7 +4,7 @@ import { IRuleBuilder, RuleBuilder } from './rule-builder.validator';
 import { ValidationFailure, ValidationResult } from './validation-result.validator';
 
 export abstract class AbstractValidator<T> {
-  private rules: Array<{
+  private readonly rules: Array<{
     propertySelector: (obj: T) => unknown;
     propertyName: string;
     ruleBuilder: RuleBuilder<T, unknown>;
@@ -27,36 +27,25 @@ export abstract class AbstractValidator<T> {
   async validateAsync(instance: T): Promise<ValidationResult> {
     const failures: ValidationFailure[] = [];
 
-    console.log(`🔍 [DEBUG] AbstractValidator.validateAsync called with ${this.rules.length} rules`);
-
     for (const rule of this.rules) {
       const value: unknown = rule.propertySelector(instance);
       const validators = rule.ruleBuilder.getRules();
-
-      console.log(
-        `🔍 [DEBUG] Validating property '${rule.propertyName}' with ${validators.length} validators, value:`,
-        value,
-      );
 
       for (const validator of validators) {
         try {
           const failure = await Promise.resolve(validator(value));
           if (failure instanceof ValidationFailure) {
-            console.log(`🔍 [DEBUG] Validation failed for '${rule.propertyName}':`, failure.message);
             failures.push(failure);
-          } else {
-            console.log(`🔍 [DEBUG] Validation passed for '${rule.propertyName}'`);
           }
         } catch (error) {
-          console.error(`🔍 [DEBUG] Validation error for '${rule.propertyName}':`, error);
-          failures.push(new ValidationFailure(rule.propertyName, `Validation error: ${error}`));
+          const errorMessage = error instanceof Error ? error.message : String(error);
+          failures.push(new ValidationFailure(rule.propertyName, `Validation error: ${errorMessage}`));
         }
       }
     }
 
     const uniqueFailures = Array.from(new Set(failures.map((obj) => obj.toString()))).map((str) => JSON.parse(str));
     const result = new ValidationResult(uniqueFailures);
-    console.log(`🔍 [DEBUG] Validation result: ${result.isValid ? 'VALID' : 'INVALID'}, errors: ${failures.length}`);
 
     return result;
   }
@@ -64,10 +53,18 @@ export abstract class AbstractValidator<T> {
   private getPropertyName<TProperty>(propertySelector: (obj: T) => TProperty): string {
     const fnString = propertySelector.toString();
 
-    // Try to match arrow function patterns like: obj => obj.property
-    const arrowMatch = fnString.match(/(?:\w+\s*=>\s*\w+\.(\w+))|(?:\(\s*\w+\s*\)\s*=>\s*\w+\.(\w+))/);
-    if (arrowMatch) {
-      return arrowMatch[1] || arrowMatch[2];
+    // Try to match simple arrow function pattern: obj => obj.property
+    const simpleArrowRegex = /\w+\s*=>\s*\w+\.(\w+)/;
+    const simpleMatch = simpleArrowRegex.exec(fnString);
+    if (simpleMatch) {
+      return simpleMatch[1];
+    }
+
+    // Try to match parenthesized arrow function: (obj) => obj.property
+    const parenArrowRegex = /\(\s*\w+\s*\)\s*=>\s*\w+\.(\w+)/;
+    const parenMatch = parenArrowRegex.exec(fnString);
+    if (parenMatch) {
+      return parenMatch[1];
     }
 
     // Fallback to 'Property' if we can't extract the name

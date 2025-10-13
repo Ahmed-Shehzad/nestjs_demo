@@ -69,7 +69,7 @@ export class CreateUserCommandHandler implements ICommandHandler<CreateUserComma
         throw error;
       }
       return FluentResult.failure<number>('An error occurred while creating the user.', 'USER_CREATION_FAILED', {
-        ...error,
+        originalError: error instanceof Error ? error.message : String(error),
       });
     }
   }

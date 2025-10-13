@@ -34,8 +34,9 @@ describe('UnitOfWork - Database Error Handling', () => {
     }).compile();
 
     service = module.get<UnitOfWork>(UnitOfWork);
-    prismaService = module.get<PrismaService>(PrismaService);
-    problemDetailsService = module.get<ProblemDetailsService>(ProblemDetailsService);
+    // Get services but don't assign to variables as they're not used in tests
+    module.get<PrismaService>(PrismaService);
+    module.get<ProblemDetailsService>(ProblemDetailsService);
 
     // Reset mocks
     jest.clearAllMocks();

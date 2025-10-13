@@ -5,7 +5,10 @@
       "label": "Build TypeScript",
       "type": "shell",
       "command": "npm",
-      "args": ["run", "build"],
+      "args": [
+        "run",
+        "build"
+      ],
       "group": "build",
       "presentation": {
         "echo": true,
@@ -21,7 +24,10 @@
       "label": "Start Development Server",
       "type": "shell",
       "command": "npm",
-      "args": ["run", "start:dev"],
+      "args": [
+        "run",
+        "start:dev"
+      ],
       "group": "build",
       "presentation": {
         "echo": true,
@@ -36,7 +42,10 @@
         "owner": "typescript",
         "source": "ts",
         "applyTo": "closedDocuments",
-        "fileLocation": ["relative", "${workspaceRoot}"],
+        "fileLocation": [
+          "relative",
+          "${workspaceRoot}"
+        ],
         "pattern": "$tsc",
         "background": {
           "activeOnStart": true,
@@ -49,7 +58,10 @@
       "label": "Start Debug Mode",
       "type": "shell",
       "command": "npm",
-      "args": ["run", "start:debug"],
+      "args": [
+        "run",
+        "start:debug"
+      ],
       "group": "build",
       "presentation": {
         "echo": true,
@@ -64,7 +76,10 @@
         "owner": "typescript",
         "source": "ts",
         "applyTo": "closedDocuments",
-        "fileLocation": ["relative", "${workspaceRoot}"],
+        "fileLocation": [
+          "relative",
+          "${workspaceRoot}"
+        ],
         "pattern": "$tsc",
         "background": {
           "activeOnStart": true,
@@ -77,7 +92,9 @@
       "label": "Run Tests",
       "type": "shell",
       "command": "npm",
-      "args": ["test"],
+      "args": [
+        "test"
+      ],
       "group": "test",
       "presentation": {
         "echo": true,
@@ -92,7 +109,10 @@
       "label": "Run Tests with Coverage",
       "type": "shell",
       "command": "npm",
-      "args": ["run", "test:cov"],
+      "args": [
+        "run",
+        "test:cov"
+      ],
       "group": "test",
       "presentation": {
         "echo": true,
@@ -107,7 +127,10 @@
       "label": "killProcesses",
       "type": "shell",
       "command": "pkill",
-      "args": ["-f", "nest.js"],
+      "args": [
+        "-f",
+        "nest.js"
+      ],
       "group": "build",
       "presentation": {
         "echo": true,

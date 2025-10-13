@@ -14,18 +14,14 @@ export class ValidationBehavior implements IPipelineBehavior<any, any> {
 
   async handleAsync(request: any, next: () => Promise<any>): Promise<any> {
     const requestName = request.constructor.name;
-    console.log(`[Validation] Processing request: ${requestName}`);
 
     const validator = this.discovery.getValidator(requestName);
     if (!validator) {
-      console.log(`[Validation] No validator found for: ${requestName}`);
       return next();
     }
 
     const result = await validator.validateAsync(request);
     if (!result.isValid) {
-      console.log(`[Validation] Validation failed for ${requestName}:`, result.errors);
-
       // Use the Problem Details Service to create a standardized validation error
       const validationException = this.problemDetailsService.createValidationProblem(result.errors);
 

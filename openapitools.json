@@ -1,0 +1,63 @@
+{
+  "$schema": "./node_modules/@openapitools/openapi-generator-cli/config.schema.json",
+  "spaces": 2,
+  "generator-cli": {
+    "version": "7.10.0",
+    "generators": {
+      "typescript-axios": {
+        "generatorName": "typescript-axios",
+        "output": "./generated/client",
+        "inputSpec": "./docs/api/openapi.json",
+        "additionalProperties": {
+          "supportsES6": true,
+          "npmName": "webapi-client",
+          "npmVersion": "1.0.0",
+          "modelPropertyNaming": "camelCase",
+          "withInterfaces": true,
+          "typescriptThreePlus": true
+        }
+      },
+      "python": {
+        "generatorName": "python",
+        "output": "./generated/python-client",
+        "inputSpec": "./docs/api/openapi.json",
+        "additionalProperties": {
+          "packageName": "webapi_client",
+          "projectName": "webapi-client",
+          "packageVersion": "1.0.0",
+          "library": "urllib3"
+        }
+      },
+      "java": {
+        "generatorName": "java",
+        "output": "./generated/java-client",
+        "inputSpec": "./docs/api/openapi.json",
+        "additionalProperties": {
+          "groupId": "com.example",
+          "artifactId": "webapi-client",
+          "apiPackage": "com.example.webapi.api",
+          "modelPackage": "com.example.webapi.model",
+          "invokerPackage": "com.example.webapi.client",
+          "library": "okhttp-gson",
+          "java8": true
+        }
+      },
+      "csharp": {
+        "generatorName": "csharp",
+        "output": "./generated/csharp-client",
+        "inputSpec": "./docs/api/openapi.json",
+        "additionalProperties": {
+          "packageName": "WebApi.Client",
+          "packageTitle": "WebAPI Client",
+          "packageCompany": "Example Company",
+          "packageAuthors": "API Team",
+          "packageCopyright": "Copyright (c) 2025",
+          "packageDescription": "Generated client for WebAPI",
+          "packageVersion": "1.0.0",
+          "targetFramework": "net6.0",
+          "library": "httpclient"
+        }
+      }
+    }
+  }
+}
